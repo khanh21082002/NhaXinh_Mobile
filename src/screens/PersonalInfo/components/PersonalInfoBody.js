@@ -15,13 +15,12 @@ export const PersonalInfoBody = ({ user }) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         email: user.email,
-        firstname: user.name.firstname,
-        lastname: user.name.lastname,
+        firstname: user.firstName,
+        lastname: user.lastName,
         phone: user.phone,
         birthdate: "12/04/2002",
         gender: "Nam",
-        city: user.address.city,
-        street: user.address.street
+        address: user.address,     
     });
 
     const handleChange = (key, value) => {
@@ -71,8 +70,7 @@ export const PersonalInfoBody = ({ user }) => {
                     <FormInput label="Số điện thoại" value={formData.phone} editable={isEditing} onChangeValue={(text) => handleChange("phone", text)} />
                     <FormInput label="Ngày tháng năm sinh" value={formData.birthdate} iconName="calendar-today" isDate editable={isEditing} onChangeValue={(value) => handleChange("birthdate", value)} />
                     <FormInput label="Giới tính" value={formData.gender} iconName="arrow-drop-down" isGender editable={isEditing} onChangeValue={(value) => handleChange("gender", value)} />
-                    <FormInput label="Tỉnh/Thành phố" value={formData.city} iconName="arrow-drop-down" isCity editable={isEditing} onChangeValue={(value) => handleChange("city", value)} />
-                    <FormInput label="Thường trú" value={formData.street} editable={isEditing} onChangeText={(text) => handleChange("street", text)} />
+                    <FormInput label="Tỉnh/Thành phố" value={formData.address} iconName="arrow-drop-down" isCity editable={isEditing} onChangeValue={(value) => handleChange("city", value)} />
                 </View>
                 {isEditing && (
                     <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>

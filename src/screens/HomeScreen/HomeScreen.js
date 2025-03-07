@@ -108,7 +108,7 @@ export const HomeScreen = ({ navigation }) => {
               message={
                 Object.keys(user).length === 0
                   ? notification
-                  : notification + ' ' + user.name.firstname + ' ' + user.name.lastname
+                  : notification + ' ' + user.firstName + ' ' + user.lastName
               }
             />
           )}

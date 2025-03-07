@@ -88,7 +88,7 @@ const Otp = (props) => {
     } catch (error) {
       setIsModalVisible(true);
       setIsOTPValid(false);
-      // alert(error);
+      //  alert(error);
     }
   };
 

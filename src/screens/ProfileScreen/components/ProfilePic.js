@@ -82,7 +82,7 @@ export const ProfilePic = ({
           </View>
         </View>
       </View>
-      <CustomText style={styles.userName}>{user.name.firstname + " " + user.name.lastname}</CustomText>
+      <CustomText style={styles.userName}>{user.firstName + " " + user.lastName}</CustomText>
       <View style={styles.priceCard}>
         <Text style={styles.label}>Tổng chi tiêu</Text>
         <View style={styles.balanceContainer}>

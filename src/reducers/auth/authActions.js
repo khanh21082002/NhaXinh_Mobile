@@ -15,6 +15,9 @@ export const UPLOAD_PROFILEPIC = 'UPLOAD_PROFILEPIC';
 export const FORGET_PASSWORD = 'FORGET_PASSWORD';
 export const RESET_PASSWORD = 'RESET_PASSWORD';
 export const RESET_ERROR = 'RESET_ERROR';
+export const RESET_SUCCESS = 'RESET_SUCCESS';
+export const GET_PROFILE_SUCCESS = 'GET_PROFILE_SUCCESS';
+
 
 import AskingExpoToken from '../../components/Notification/AskingNotiPermission';
 
@@ -28,7 +31,7 @@ const saveDataToStorage = (name, data) => {
   );
 };
 
-export const SignUp = (name, email, password) => {
+export const SignUp = (firstname,lastname, email, password ,rePassword) => {
   return async (dispatch) => {
     dispatch({
       type: AUTH_LOADING,
@@ -42,9 +45,11 @@ export const SignUp = (name, email, password) => {
           },
           method: 'POST',
           body: JSON.stringify({
-            name,
+            firstName:firstname,
+            lastName:lastname,
             email,
             password,
+            rePassword
           }),
         }),
       );
@@ -53,17 +58,11 @@ export const SignUp = (name, email, password) => {
         dispatch({
           type: AUTH_FAILURE,
         });
-        throw new Error(errorResData.err);
+        throw new Error(errorResData);
       }
       const resData = await response.json();
-      console.log("Kết quả từ API:", resData);
-
-      if (resData === true) {
+      console.log("Kết quả từ API:", resData);     
         dispatch({ type: SIGN_UP });
-      } else {
-        dispatch({ type: AUTH_FAILURE });
-        throw new Error("Đăng ký thất bại, vui lòng kiểm tra thông tin.");
-      }
     } catch (err) {
       throw err;
     }
@@ -71,14 +70,14 @@ export const SignUp = (name, email, password) => {
 };
 
 //SentOTP
-export const SentOTP = (email , otp) => {
+export const SentOTP = (email , Otp) => {
   return async (dispatch) => {
     dispatch({
       type: AUTH_LOADING,
     });
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL_NHAXINH}/Login/VerifyOTPForCustomer?email=${encodeURIComponent(email)}&userOtp=${otp}`, {
+        fetch(`${API_URL_NHAXINH}/Login/VerifyOTPForCustomer`, {
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
@@ -86,16 +85,17 @@ export const SentOTP = (email , otp) => {
           method: 'POST',
           body: JSON.stringify({
             email,
-            otp,
+            userOtp: Otp,
           }),
         }),
       );
+      console.log('response', response);
       if (!response.ok) {
         const errorResData = await response.json();
         dispatch({
           type: AUTH_FAILURE,
         });
-        throw new Error(errorResData.err);
+        throw new Error(errorResData);
       }
       dispatch({
         type: SIGN_UP,
@@ -134,7 +134,7 @@ export const Login = (email, password) => {
         dispatch({
           type: AUTH_FAILURE,
         });
-        throw new Error(errorResData.err);
+        throw new Error(errorResData);
       }
       const resData = await response.json();
       console.log('resData', resData);
@@ -148,11 +148,31 @@ export const Login = (email, password) => {
       }
 
       console.log('decodedToken', decodedToken);
-      saveDataToStorage('users', decodedToken);
+      //Get User
+      const userId = decodedToken.name;
+      const jwtToken = resData;
+      console.log('userId', userId);
+      const userResponse = await fetch(`${API_URL_NHAXINH}/User/GetUserById?id=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        method: 'GET',
+      });
+      if (!userResponse.ok) {
+        const errorText = await userResponse.text();
+        throw new Error(`Không thể lấy thông tin người dùng! Lỗi: ${errorText}`);
+      }
+
+      const userData = await userResponse.json();
+      console.log('Dữ liệu người dùng:', userData);
+
+      saveDataToStorage('users', userData);
       dispatch(setLogoutTimer(60 * 60 * 1000));
       dispatch({
         type: LOGIN,
-        user: decodedToken,
+        user: userData,
       });
     } catch (err) {
       throw err;
@@ -249,7 +269,10 @@ export const Login = (email, password) => {
 //   };
 // };
 
+//
 
+
+//
 export const EditInfo = (phone, address) => {
   return async (dispatch, getState) => {
     const user = getState().auth.user;
@@ -289,6 +312,7 @@ export const EditInfo = (phone, address) => {
     }
   };
 };
+
 
 export const UploadProfilePic = (imageUri, filename, type) => {
   return async (dispatch, getState) => {

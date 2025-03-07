@@ -46,12 +46,19 @@ const validate = (values) => {
   } else if (values.confirmpassword !== values.password) {
     errors.confirmpassword = "Mật khẩu xác nhận không trùng khớp";
   }
-  if (!values.username) {
-    errors.username = "Tên không được bỏ trống";
-  } else if (values.username.length > 20) {
-    errors.username = "Tên không vượt quá 20 ký tự";
-  } else if (values.username.length < 6) {
-    errors.username = "Tên phải nhiều hơn 6 ký tự";
+  if (!values.firstname) {
+    errors.firstname = "Tên không được bỏ trống";
+  } else if (values.firstname.length > 20) {
+    errors.firstname = "Tên không vượt quá 20 ký tự";
+  } else if (values.firstname.length < 1) {
+    errors.firstname = "Tên phải nhiều hơn 6 ký tự";
+  }
+  if (!values.lastname) {
+    errors.lastname = "Tên không được bỏ trống";
+  } else if (values.lastname.length > 20) {
+    errors.lastname = "Tên không vượt quá 20 ký tự";
+  } else if (values.lastname.length < 1) {
+    errors.lastname = "Tên phải nhiều hơn 6 ký tự";
   }
 
   return errors;
@@ -72,7 +79,7 @@ const Signup = (props) => {
 
   const submit = async (values) => {
     try {
-      await dispatch(SignUpAct(values.username, values.email, values.password));
+      await dispatch(SignUpAct(values.firstname,values.lastname, values.email, values.password, values.confirmpassword));
       reset();
       if (!unmounted.current) {
         Alert.alert("Signup Successfully", "You can use OTP to login", [
@@ -86,7 +93,11 @@ const Signup = (props) => {
         ]);
       }
     } catch (err) {
-      alert(err);
+      Alert.alert("Signup Failed", err.message, [
+        {
+          text: "OK",
+        },
+      ]);
     }
   };
   return (
@@ -119,13 +130,21 @@ const Signup = (props) => {
               zIndex: 0,
             }}
           >
-            <View style={{ marginBottom: 20 }}>
+            <View style={{ marginBottom: 10 }}>
               <CustomText style={{ ...styles.title, color: Colors.text }}>Xin chào!</CustomText>
               <Text style={styles.subTitle}>Vui lòng đăng ký để tiếp tục</Text>
             </View>
             <View>
               <Field
-                name="username"
+                name="firstname"
+                keyboardType="default"
+                label="Họ"
+                component={renderField}
+                icon="id-card"
+                autoCapitalize={true}
+              />
+              <Field
+                name="lastname"
                 keyboardType="default"
                 label="Tên"
                 component={renderField}
@@ -230,7 +249,7 @@ const styles = StyleSheet.create({
   header: {
     marginTop: height * 0.1,
     width: width,
-    marginBottom: 40,
+    marginBottom: 30,
     paddingHorizontal: 20,
     backgroundColor: Colors.white,
     zIndex: 1,
@@ -281,7 +300,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 50,
-    marginTop: 30
+    marginTop: 20
   },
   img: {
     resizeMode: 'contain',

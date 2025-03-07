@@ -103,7 +103,11 @@ const Login = (props) => {
       props.navigation.navigate('HomeTab');
     } catch (err) {
       setLoading(false);
-      alert(err);
+      Alert.alert("Login Failed", "Email or password is incorrect", [
+        {
+          text: "OK",
+        },
+      ]);
     }
   };
 
