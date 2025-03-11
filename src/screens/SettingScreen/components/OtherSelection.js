@@ -17,9 +17,9 @@ export const OtherSelection = () => {
       value: isNotificationsEnabled,
       onValueChange: setIsNotificationsEnabled, // Update state when switch toggles
     },
-    { icon: "information-circle-outline", title: "Điều khoản sử dụng", screen: "" },
-    { icon: "lock-open-outline", title: "Chính sách bảo mật", screen: "" },
-    { icon: "cash-outline", title: "Chính sách thanh toán", screen: "" },
+    { icon: "information-circle-outline", title: "Điều khoản sử dụng", screen: "TermsOfUse" },
+    { icon: "lock-open-outline", title: "Chính sách bảo mật", screen: "PrivacyPolicy" },
+    { icon: "cash-outline", title: "Chính sách thanh toán", screen: "PaymentPolicy" },
   ];
 
   const navigation = useNavigation();

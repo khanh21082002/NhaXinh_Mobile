@@ -133,7 +133,6 @@ const ARScreen = ({ navigation }) => {
   }, []);
 
   const handleClose = () => {
-    // Nếu bạn đang sử dụng navigation để mở AR screen
     if (navigation && navigation.goBack) {
       navigation.goBack();
     } else {

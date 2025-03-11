@@ -31,7 +31,7 @@ export const Header = ({ navigation }) => {
       </View>
       <Image
         style={styles.image}
-        source={require("../../../assets/images/logoTextWhite.png")}
+        source={require("../../../assets/images/logo.png")}
       />
     </View>
   );

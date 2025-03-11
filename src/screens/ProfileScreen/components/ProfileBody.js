@@ -9,7 +9,6 @@ export const ProfileBody = ({ user }) => {
     { icon: "person-outline", title: "Thông tin cá nhân", screen: "PersonalInfo" },
     { icon: "time-outline", title: "Lịch sử mua hàng" , screen: "Order"},
     { icon: "card-outline", title: "Liên kết ngân hàng", screen: "PaymentMethod"},
-    { icon: "help-circle-outline", title: "Hỗ trợ" },
     { icon: "settings-outline", title: "Cài đặt" , screen: "Setting"},
   ];
 

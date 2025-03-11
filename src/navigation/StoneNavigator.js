@@ -51,17 +51,20 @@ import { SettingScreen } from '../screens/SettingScreen';
 //Notification Screens
 import { NotificationScreen } from '../screens/NotificationScreen';
 
-//Ar Screens
+//Terms Screens
+import { TermsOfUseScreen } from '../screens/TermsOfUseScreen';
 
 // redux
 import { useSelector } from 'react-redux';
 import { AppColors } from '../styles';
-import ARScreen from '../screens/ARScreen/ARScreen';
+
 import MessengerScreen from '../screens/MessengerScreen/MessengerScreen';
 import PaymentMethodScreen from '../screens/BankScreen/PaymentMethodScreen';
 import BankListScreen from '../screens/BankScreen/BankListScreen';
 import BankAccountScreen from '../screens/BankScreen/BankAccountScreen';
 import BankCardScreen from '../screens/BankScreen/BankCardScreen';
+import { PrivacyPolicyScreen } from '../screens/PrivacyPolicyScreen';
+import PaymentPolicyScreen from '../screens/PaymentPolicyScreen/PaymentPolicyScreen';
 
 
 
@@ -181,6 +184,9 @@ export const ProfileStackScreen = () => (
     <ProfileStack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
     <ProfileStack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
     <ProductStack.Screen name="Setting" component={SettingScreen} />
+    <ProductStack.Screen name="TermsOfUse" component={TermsOfUseScreen} />
+    <ProductStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+    <ProductStack.Screen name="PaymentPolicy" component={PaymentPolicyScreen} />
   </ProfileStack.Navigator>
 );
 
