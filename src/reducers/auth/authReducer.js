@@ -14,6 +14,7 @@ import UserMessages from '../../messages/user';
 
 const initialState = {
   user: {},
+  token: '',
   notification: {},
   isLoading: false,
   error: false,
@@ -42,6 +43,7 @@ export const authReducer = (state = initialState, action) => {
     case LOGIN:
       return {
         user: action.user,
+        token: action.token,
         notification: UserMessages['user.login.success'],
         isLoading: false,
       };
@@ -74,27 +76,28 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         isLoading: false,
       };
-    case EDIT_INFO:
-      state.user.phone = action.phone;
-      state.user.address = action.address;
-      //Return ...state.user make the comp rerender
-      return {
-        ...state,
-        user: {
-          ...state.user,
-        },
-        isLoading: false,
-      };
-    case UPLOAD_PROFILEPIC:
-      state.user.profilePicture = action.profilePic;
-      return {
-        ...state,
-        user: {
-          ...state.user,
-        },
-        isLoading: false,
-      };
-    default:
-      return state;
-  }
+      case EDIT_INFO:
+        return {
+          ...state,
+          user: {
+            ...state.user, 
+            firstName: action.firstName, 
+            lastName: action.lastName, 
+            phone: action.phone, 
+            address: action.address,
+          },
+          isLoading: false,
+        };
+        case UPLOAD_PROFILEPIC:
+          return {
+            ...state,
+            user: {
+              ...state.user,
+              avatarUrl: action.avatarUrl,
+            },
+            isLoading: false,
+          };
+        default:
+          return state;
+      }
 };

@@ -8,13 +8,10 @@ import {
   Text
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Colors from "../../../utils/Colors";
-import { _pickImage } from "../../../utils/Tools";
+import { _pickImage } from "../../../utils/Tools";  // Đảm bảo _pickImage được cài đặt chính xác
 import CustomText from "../../../components/UI/CustomText";
 import { SheetManager } from "react-native-actions-sheet";
 import PropTypes from "prop-types";
-import { registerSheet } from 'react-native-actions-sheet';
-import '../../../utils/actionSheets';
 import { AppColors } from "../../../styles";
 
 export const ProfilePic = ({
@@ -24,28 +21,29 @@ export const ProfilePic = ({
   setFilename,
   setType,
   setUploadButton,
+  uploadButton,
+  UploadProfile
 }) => {
-  // Sửa lỗi gọi SheetManager mà không dùng ref
+
   const UploadProfileHandler = async () => {
     try {
-      const result = await SheetManager.show('profile-pic-options', {
+      await SheetManager.show('profile-pic-options', {
         payload: {
           handler: async (buttonIndex) => {
-
             let pickerResult;
             if (buttonIndex === 0) {
               pickerResult = await _pickImage('camera');
             } else if (buttonIndex === 1) {
               pickerResult = await _pickImage('library');
-            }
-
-            if (result && !result.cancelled) {
-              let localUri = result.uri;
-              let filename = localUri.split("/").pop();
+            } 
+            // Kiểm tra nếu có kết quả và không bị hủy bỏ
+            if (pickerResult && pickerResult.assets && pickerResult.assets.length > 0 && !pickerResult.cancelled) {
+              const localUri = pickerResult.assets[0].uri;
+              const filename = localUri.split("/").pop();
               setImageUri(localUri);
               setFilename(filename);
-              setType(result.type);
-              setUploadButton(false);
+              setType(pickerResult.assets[0].type);
+              setUploadButton(true);
             }
           }
         },
@@ -54,6 +52,8 @@ export const ProfilePic = ({
       console.error("Lỗi khi mở ActionSheet:", error);
     }
   };
+  
+  
 
   return (
     <View>
@@ -63,9 +63,9 @@ export const ProfilePic = ({
           source={
             imageUri
               ? { uri: imageUri }
-              : user.profilePicture
-                ? { uri: user.profilePicture }
-                : require("../../../assets/images/defaultprofile.png") // Default image
+              : user.avatarUrl
+              ? { uri: user.avatarUrl} 
+              : require("../../../assets/images/defaultprofile.png") 
           }
         />
         <View
@@ -82,6 +82,12 @@ export const ProfilePic = ({
           </View>
         </View>
       </View>
+       
+       {uploadButton && (
+        <TouchableOpacity style={styles.uploadButton} onPress={UploadProfile}>
+          <Text style={styles.uploadButtonText}>Tải lên</Text>
+        </TouchableOpacity>
+      )}
       <CustomText style={styles.userName}>{user.firstName + " " + user.lastName}</CustomText>
       <View style={styles.priceCard}>
         <Text style={styles.label}>Tổng chi tiêu</Text>
@@ -119,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor:AppColors.primary,
+    backgroundColor: AppColors.primary,
   },
   userName: {
     fontSize: 20,
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     alignItems: "center",
-    marginVertical:20
+    marginVertical: 20,
   },
   label: {
     fontSize: 14,
@@ -150,11 +156,23 @@ const styles = StyleSheet.create({
   balanceAmount: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#FFA500",
+    color: AppColors.primary,
   },
   balanceType: {
     fontSize: 16,
     color: "#666",
+  },
+  uploadButton: {
+    backgroundColor: AppColors.primary,
+    padding: 10,
+    borderRadius: 25,
+    marginTop: 10,
+    alignItems: "center",
+  },
+  uploadButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
 

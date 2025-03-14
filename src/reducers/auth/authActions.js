@@ -146,13 +146,9 @@ export const Login = (email, password) => {
         console.error('Lỗi giải mã token:', decodeError.message);
         throw new Error('Lỗi token không hợp lệ');
       }
-
-      console.log('decodedToken', decodedToken);
       //Get User
-      const userId = decodedToken.name;
       const jwtToken = resData;
-      console.log('userId', userId);
-      const userResponse = await fetch(`${API_URL_NHAXINH}/User/GetUserById?id=${userId}`, {
+      const userResponse = await fetch(`${API_URL_NHAXINH}/Profile/GetCurrentUserProfile`, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
           Accept: 'application/json',
@@ -173,6 +169,7 @@ export const Login = (email, password) => {
       dispatch({
         type: LOGIN,
         user: userData,
+        token: jwtToken,
       });
     } catch (err) {
       throw err;
@@ -180,119 +177,31 @@ export const Login = (email, password) => {
   };
 };
 
-// export const Login = (username, password) => {
-//   return async (dispatch) => {
-//     dispatch({
-//       type: AUTH_LOADING,
-//     });
-
-//     const pushToken = await AskingExpoToken();
-
-//     try {
-//       const response = await timeoutPromise(
-//         fetch(`${API_URL_NHAXINH}/auth/login`, {
-//           headers: {
-//             Accept: 'application/json',
-//             'Content-Type': 'application/json',
-//           },
-//           method: 'POST',
-//           body: JSON.stringify({
-//             username,
-//             password,
-//             pushTokens: [pushToken],
-//           }),
-//         })
-//       );
-
-      
-//       // Kiểm tra nếu phản hồi không hợp lệ
-//       if (!response.ok) {
-//         const errorText = await response.text(); // Đọc phản hồi dạng text
-//         console.error('Lỗi từ API:', errorText); // Log chi tiết
-//         dispatch({
-//           type: AUTH_FAILURE,
-//         });
-//         throw new Error('Đăng nhập thất bại!');
-//       }
-
-//       // Kiểm tra nếu phản hồi là JSON
-//       const contentType = response.headers.get('content-type');
-//       if (!contentType || !contentType.includes('application/json')) {
-//         const errorText = await response.text();
-//         console.error('Phản hồi không phải JSON:', errorText);
-//         throw new Error('Phản hồi từ máy chủ không hợp lệ!');
-//       }
-
-//       // Giải mã JSON
-//       const resData = await response.json();
-//       console.log('Dữ liệu trả về từ API:', resData);  // Kiểm tra nội dung của resData
-      
-//       let decodedToken;
-//       try {
-//         decodedToken = jwtDecode(resData.token);  // Giải mã token
-//         console.log('Thông tin từ token:', decodedToken);
-//       } catch (decodeError) {
-//         console.error('Lỗi giải mã token:', decodeError.message);
-//         throw new Error('Token không hợp lệ!');
-//       }
-
-//       const userId = decodedToken.sub;
-//       const userResponse = await fetch(`https://fakestoreapi.com/users/${userId}`);
-//       if (!userResponse.ok) {
-//         const errorText = await userResponse.text();
-//         throw new Error(`Không thể lấy thông tin người dùng! Lỗi: ${errorText}`);
-//       }
-
-//       const userData = await userResponse.json();
-//       console.log('Dữ liệu người dùng:', userData);
-
-//       // Lưu token vào AsyncStorage
-//       await AsyncStorage.setItem(
-//         'userToken',
-//         JSON.stringify({
-//           token: resData.token,
-//           userInfo: userData,
-//         })
-//       );
-
-//       dispatch(setLogoutTimer(60 * 60 * 1000)); // Đặt thời gian logout
-
-//       // Dispatch LOGIN action
-//       dispatch({
-//         type: LOGIN,
-//         user: userData,
-//       });
-//     } catch (err) {
-//       console.error('Lỗi đăng nhập:', err.message);
-//       throw err; // Quăng lỗi để xử lý tiếp
-//     }
-//   };
-// };
-
-//
-
-
-//
-export const EditInfo = (phone, address) => {
+//EditInfo
+export const EditInfo = (firstName, lastName, phone, address) => {
   return async (dispatch, getState) => {
-    const user = getState().auth.user;
+    // const user = getState().auth.user;
+    const jwtToken = getState().auth.token;
     dispatch({
       type: AUTH_LOADING,
     });
     try {
+      const formData = new FormData();
+      formData.append('FirstName', firstName);
+      formData.append('LastName', lastName);
+      formData.append('Phone', phone);
+      formData.append('Address', address);
+
       const response = await timeoutPromise(
-        fetch(`${API_URL_NHAXINH}/users/${user.userid}`, {
+        fetch(`${API_URL_NHAXINH}/Profile/UpdateProfile`, {
           headers: {
+            Authorization: `Bearer ${jwtToken}`,
             Accept: 'application/json',
-            'Content-Type': 'application/json',
-            'auth-token': user.token,
+
           },
-          method: 'PATCH',
-          body: JSON.stringify({
-            phone,
-            address,
-          }),
-        }),
+          method: 'POST',
+          body: formData,
+        })
       );
       if (!response.ok) {
         const errorResData = await response.json();
@@ -304,43 +213,51 @@ export const EditInfo = (phone, address) => {
 
       dispatch({
         type: EDIT_INFO,
+        firstName,
+        lastName,
         phone,
         address,
       });
     } catch (err) {
+      console.error('Error saving data:', err);
       throw err;
     }
   };
 };
 
 
+//UploadProfilePic
 export const UploadProfilePic = (imageUri, filename, type) => {
   return async (dispatch, getState) => {
     dispatch({
       type: AUTH_LOADING,
     });
-    const user = getState().auth.user;
-    let formData = new FormData();
+    // const user = getState().auth.user;
+    const jwtToken = getState().auth.token;
+    const formData = new FormData();
     // Infer the type of the image
-    formData.append('profilePic', {
+    formData.append('image', {
       uri: imageUri,
       name: filename,
-      type,
+      type: type,
     });
     try {
+      console.log('FormData gửi đi:', formData);
       const response = await timeoutPromise(
-        fetch(`${API_URL}/users/photo/${user.userid}`, {
+        fetch(`${API_URL_NHAXINH}/Profile/UpdateProfileImage`, {
           headers: {
+            Authorization: `Bearer ${jwtToken}`,
             Accept: 'application/json',
-            'Content-Type': 'multipart/form-data',
-            'auth-token': user.token,
           },
-          method: 'PATCH',
+          method: 'POST',
           body: formData,
         }),
       );
+
+      console.log('Response:', response);
       if (!response.ok) {
         const errorResData = await response.json();
+        console.error("Error:", errorResData);
         dispatch({
           type: AUTH_FAILURE,
         });
@@ -349,7 +266,7 @@ export const UploadProfilePic = (imageUri, filename, type) => {
 
       dispatch({
         type: UPLOAD_PROFILEPIC,
-        profilePic: imageUri,
+        avatarUrl: imageUri
       });
     } catch (err) {
       throw err;
@@ -357,6 +274,7 @@ export const UploadProfilePic = (imageUri, filename, type) => {
   };
 };
 
+//ForgetPassword
 export const ForgetPassword = (email) => {
   return async (dispatch) => {
     dispatch({
@@ -364,10 +282,9 @@ export const ForgetPassword = (email) => {
     });
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL}/users/reset_pw`, {
+        fetch(`${API_URL_NHAXINH}/Login/ResetPassword`, {
           headers: {
             Accept: 'application/json',
-            'Content-Type': 'application/json',
           },
           method: 'POST',
           body: JSON.stringify({
@@ -375,6 +292,7 @@ export const ForgetPassword = (email) => {
           }),
         }),
       );
+      console.log('response', response);
       if (!response.ok) {
         const errorResData = await response.json();
         dispatch({
@@ -390,21 +308,22 @@ export const ForgetPassword = (email) => {
     }
   };
 };
-export const ResetPassword = (password, url) => {
+
+//ChangePassword
+export const ResetPassword = (email) => {
   return async (dispatch) => {
     dispatch({
       type: AUTH_LOADING,
     });
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL}/users/receive_new_password/${url.userid}/${url.token}`, {
+        fetch(`${API_URL}/Login/ResetPassword`, {
           headers: {
             Accept: 'application/json',
-            'Content-Type': 'application/json',
           },
           method: 'POST',
           body: JSON.stringify({
-            password,
+            email
           }),
         }),
       );

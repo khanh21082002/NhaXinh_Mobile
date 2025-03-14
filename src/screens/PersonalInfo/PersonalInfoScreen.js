@@ -21,12 +21,12 @@ const { width, height } = Dimensions.get("window");
 export const PersonalInfoScreen = (props) => {
     const user = useSelector((state) => state.auth.user);
     const loading = useSelector((state) => state.auth.isLoading);
-    const [imageUri, setImageUri] = useState("");
-    const [filename, setFilename] = useState("");
-    const [type, setType] = useState("");
-    const [uploadButton, setUploadButton] = useState(true);
+    // const [imageUri, setImageUri] = useState("");
+    // const [filename, setFilename] = useState("");
+    // const [type, setType] = useState("");
+    // const [uploadButton, setUploadButton] = useState(true);
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     // const UploadProfile = async () => {
     //     try {

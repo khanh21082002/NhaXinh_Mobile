@@ -37,8 +37,8 @@ ProfileBody.propTypes = {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
-    flexGrow: 1, // Thay flex: 1 bằng flexGrow
-    width: "100%", // Đảm bảo chiếm hết chiều rộng
+    flexGrow: 1, 
+    width: "100%", 
   },
   menuContainer: {
     paddingVertical: 10,

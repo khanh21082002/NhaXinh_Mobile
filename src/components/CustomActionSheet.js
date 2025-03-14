@@ -26,7 +26,7 @@ const CustomActionSheet = (props) => {
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
-          props.payload.handler(1); // Chọn ảnh từ thư viện
+          props.payload.handler(1);
           SheetManager.hide(props.sheetId);
         }}
       >

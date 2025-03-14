@@ -107,19 +107,23 @@ export const Header = ({ user, products, navigation, style }) => {
           <View style={styles.header_inner}>
             {/* Profile Image */}
             {Object.keys(user).length > 0 ? (
-               <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-               <Image
-                 source={user.profilePicture?.length === 0 ? { uri: user.profilePicture } || require("../../../assets/images/defaultprofile.png") : require("../../../assets/images/defaultprofile.png")}
-                 style={styles.profileImage}
-               />
-             </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                <Image
+                  source={
+                    user.avatarUrl && user.avatarUrl.length > 0
+                      ? { uri: user.avatarUrl } 
+                      : require("../../../assets/images/defaultprofile.png") 
+                  }
+                  style={styles.profileImage}
+                />
+              </TouchableOpacity>
             ) : (
               <Image
-                 source={user.profilePicture?.length === 0 ? { uri: user.profilePicture } || require("../../../assets/images/defaultprofile.png") : require("../../../assets/images/defaultprofile.png")}
-                 style={styles.profileImage}
-               />
+                source={require("../../../assets/images/defaultprofile.png")}
+                style={styles.profileImage}
+              />
             )}
-           
+
             {/* Chat Bubble Icon
             <TouchableOpacity onPress={_onFocus} style={styles.chatIconBox}>
               <Icon name="message-processing-outline" size={28} color={Colors.black} />

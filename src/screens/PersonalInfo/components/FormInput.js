@@ -35,8 +35,6 @@ export const FormInput = ({
   const [cities, setCities] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const genderOptions = ["Nam", "Nữ"];
-
   useEffect(() => {
     if (isCity) {
       const fetching = async () => {
@@ -134,7 +132,7 @@ export const FormInput = ({
               value={searchTerm}
               onChangeText={setSearchTerm}
               mode="outlined"
-              theme={{ colors: { primary: "#FFA500" } }}
+              theme={{ colors: { primary: AppColors.primary } }}
               style={styles.searchInput}
             />
 

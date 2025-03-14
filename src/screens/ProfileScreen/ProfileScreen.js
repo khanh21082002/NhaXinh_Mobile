@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Alert } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { View, StyleSheet, Dimensions, Alert, TouchableOpacity, Text } from "react-native";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 // Actions
@@ -18,15 +18,23 @@ export const ProfileScreen = (props) => {
   const [imageUri, setImageUri] = useState("");
   const [filename, setFilename] = useState("");
   const [type, setType] = useState("");
-  const [uploadButton, setUploadButton] = useState(true);
+  const [uploadButton, setUploadButton] = useState(false);
 
   const dispatch = useDispatch();
+  const unmounted = useRef(false);
 
+  useEffect(() => {
+    return () => {
+      unmounted.current = true;
+    };
+  }, []);
   const UploadProfile = async () => {
     try {
       await dispatch(UploadProfilePic(imageUri, filename, type));
-      setUploadButton(true);
-      Alert.alert("Cập nhật", "Cập nhật thành công", [{ text: "OK" }]);
+      setUploadButton(false);
+      if (unmounted.current) {
+        Alert.alert("Thông báo", "Cập nhật ảnh đại diện thành công", [{ text: "OK" }]);
+      };
     } catch (err) {
       alert(err);
     }
@@ -39,7 +47,6 @@ export const ProfileScreen = (props) => {
         {loading && <Loader />}
         <View style={styles.profileContainer}>
           <View style={styles.profileBox}>
-            {/* <EditButton navigation={props.navigation} user={user} /> */}
             <ProfilePic
               user={user}
               imageUri={imageUri}
@@ -47,10 +54,13 @@ export const ProfileScreen = (props) => {
               setType={setType}
               setFilename={setFilename}
               setUploadButton={setUploadButton}
+              uploadButton={uploadButton}
+              UploadProfile={UploadProfile}
             />
             <ProfileBody user={user} />
           </View>
         </View>
+       
       </View>
     </SheetProvider>
   );

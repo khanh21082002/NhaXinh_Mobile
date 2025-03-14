@@ -73,9 +73,9 @@ export default (props) => {
                 <Image
                   style={styles.profilePic}
                   source={
-                    user.profilePicture?.length === 0
-                      ? require("../assets/images/defaultprofile.png")
-                      : { uri: user.profilePicture }
+                    user.avatarUrl && user.avatarUrl.length > 0
+                      ? { uri: user.avatarUrl } 
+                      : require("../assets/images/defaultprofile.png") 
                   }
                 />
               </TouchableOpacity>
@@ -88,7 +88,7 @@ export default (props) => {
                     paddingVertical: 0,
                   }}
                 >
-                  {user.username}
+                  {user.firstName + " " + user.lastName}
                 </Text>
                 <Text
                   style={{
@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
   },
   profilePic: {
     resizeMode: Platform.OS === "android" ? "cover" : "contain",
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     borderRadius: 25,
   },
   logo: {

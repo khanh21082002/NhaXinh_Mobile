@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Image, ScrollView , ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Image, ScrollView, ActivityIndicator , Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { EditInfo as EditInfoAction } from '../../../reducers';
 import { FormInput } from './FormInput';
 import { AppColors } from '../../../styles';
 import Icon from 'react-native-vector-icons/Feather';
 import { useDispatch } from 'react-redux';
-
 
 export const PersonalInfoBody = ({ user }) => {
     const dispatch = useDispatch();
@@ -18,9 +17,7 @@ export const PersonalInfoBody = ({ user }) => {
         firstname: user.firstName,
         lastname: user.lastName,
         phone: user.phone,
-        birthdate: "12/04/2002",
-        gender: "Nam",
-        address: user.address,     
+        address: user.address,
     });
 
     const handleChange = (key, value) => {
@@ -30,8 +27,17 @@ export const PersonalInfoBody = ({ user }) => {
     const handleSave = async (formData) => {
         try {
             setLoading(true);
-            await dispatch(EditInfoAction(formData.email, formData.password));           
-        }catch (err){
+            await dispatch(EditInfoAction(formData.firstname, formData.lastname, formData.phone, formData.address));
+            setIsEditing(false);
+            setFormData({ ...formData });
+            // Show success alert
+            Alert.alert(
+                "Thông báo",
+                "Bạn đã cập nhật thành công thông tin cá nhân.",
+                [{ text: "OK" ,  onPress: () => navigation.navigate('HomeTab') }],
+                { cancelable: false }
+            );
+        } catch (err) {
             setIsEditing(false);
             alert(err);
         }
@@ -68,12 +74,10 @@ export const PersonalInfoBody = ({ user }) => {
                     </View>
 
                     <FormInput label="Số điện thoại" value={formData.phone} editable={isEditing} onChangeValue={(text) => handleChange("phone", text)} />
-                    <FormInput label="Ngày tháng năm sinh" value={formData.birthdate} iconName="calendar-today" isDate editable={isEditing} onChangeValue={(value) => handleChange("birthdate", value)} />
-                    <FormInput label="Giới tính" value={formData.gender} iconName="arrow-drop-down" isGender editable={isEditing} onChangeValue={(value) => handleChange("gender", value)} />
-                    <FormInput label="Tỉnh/Thành phố" value={formData.address} iconName="arrow-drop-down" isCity editable={isEditing} onChangeValue={(value) => handleChange("city", value)} />
+                    <FormInput label="Tỉnh/Thành phố" value={formData.address} iconName="arrow-drop-down" isCity editable={isEditing} onChangeValue={(text) => handleChange("address", text)} />
                 </View>
                 {isEditing && (
-                    <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
+                    <TouchableOpacity style={styles.saveButton} onPress={() => handleSave(formData)} disabled={loading}>
                         {loading ? (
                             <ActivityIndicator size="small" color="#fff" />
                         ) : (
