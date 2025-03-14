@@ -1,81 +1,122 @@
 import React from "react";
-import { View, TextInput, TouchableWithoutFeedback } from "react-native";
-import CustomText from "../../../components/UI/CustomText";
+import { View } from "react-native";
+import { TextInput } from "react-native-paper";
 //Colors
 import Colors from "../../../utils/Colors";
+import CustomText from "../../../components/UI/CustomText";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AppColors } from "../../../styles";
 
 export default renderField = ({
+  label,
   keyboardType,
   secureTextEntry,
   icon,
-  showPass,
   passIcon,
-  placeholder,
-  setShowPass,
+  showOldPass,
+  showNewPass,
+  setShowOldPass,
+  setShowNewPass,
   showConfirmPass,
   setshowConfirmPass,
-  meta: { touched, error },
+  autoCapitalize,
+  meta: { touched, error, warning },
   input: { onChange, ...restInput },
 }) => {
   return (
     <View>
-      <View
+      <MaterialCommunityIcons
+        name={icon}
+        size={20}
+        color={AppColors.primary}
         style={{
-          height: 50,
-          width: "100%",
-          borderBottomWidth: 1,
-          borderBottomColor: Colors.grey,
-          marginBottom: 10,
+          position: "absolute",
+          top: 23,
+          left: 18,
+          zIndex: 10,
         }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <MaterialCommunityIcons
+      />
+      <TextInput
+        label={label}
+        autoCapitalize={autoCapitalize ? "words" : "none"}
+        clearButtonMode={passIcon ? "never" : "always"}
+        mode="outlined"
+        selectionColor={AppColors.primary}
+        theme={{
+          roundness: 10,
+          colors: { primary: AppColors.primary }
+        }}
+        left={
+          <TextInput.Icon
             name={icon}
-            size={22}
+            size={24}
             color={AppColors.primary}
+            style={{ paddingRight: 10 }}
           />
-          <TextInput
-            style={{
-              height: 40,
-              padding: 5,
-              width: "80%",
-              marginLeft: 10,
-            }}
-            placeholder={placeholder}
-            keyboardType={keyboardType}
-            onChangeText={onChange}
-            secureTextEntry={secureTextEntry}
-            {...restInput}
-          />
-          {passIcon === "pass" ? (
-            <TouchableWithoutFeedback
-              onPress={() => setShowPass((prev) => !prev)}
-            >
-              <MaterialCommunityIcons
-                name={!showPass ? "eye-off-outline" : "eye-outline"}
-                size={22}
-                color={AppColors.primary}
-              />
-            </TouchableWithoutFeedback>
-          ) : passIcon === "confirm" ? (
-            <TouchableWithoutFeedback
-              onPress={() => setshowConfirmPass((prev) => !prev)}
-            >
-              <MaterialCommunityIcons
-                name={!showConfirmPass ? "eye-off-outline" : "eye-outline"}
-                size={22}
-                color={AppColors.primary}
-              />
-            </TouchableWithoutFeedback>
-          ) : (
-            <View />
-          )}
-        </View>
-      </View>
+        }
+        style={{
+          fontSize: 12,
+          backgroundColor: AppColors.blackLight,
+          marginVertical: 5,
+        }}
+        keyboardType={keyboardType}
+        onChangeText={onChange}
+        secureTextEntry={secureTextEntry}
+        {...restInput}
+      />
+      {passIcon === "oldpass" ? (
+        <MaterialCommunityIcons
+          onPress={() => {
+            setShowOldPass((prev) => !prev);
+          }}
+          name={showOldPass ? "eye" : "eye-off"}
+          size={24}
+          color={AppColors.primary}
+          style={{
+            position: "absolute",
+            top: "35%",
+            right: 10,
+            zIndex: 100,
+          }}
+        />
+      ) : passIcon === "newpass" ? (
+        <MaterialCommunityIcons
+          onPress={() => {
+            setShowNewPass((prev) => !prev);
+          }}
+          name={showNewPass ? "eye" : "eye-off"}
+          size={24}
+          color={AppColors.primary}
+          style={{
+            position: "absolute",
+            top: "35%",
+            right: 10,
+            zIndex: 100,
+          }}
+        />
+      ) : passIcon === "confirmpass" ? (
+        <MaterialCommunityIcons
+          onPress={() => {
+            setshowConfirmPass((prev) => !prev);
+          }}
+          name={showConfirmPass ? "eye" : "eye-off"}
+          size={24}
+          color={AppColors.primary}
+          style={{
+            position: "absolute",
+            top: "35%",
+            right: 10,
+            zIndex: 100,
+          }}
+        />
+      ) : (
+        <></>
+      )}
+
       {touched && error && (
-        <CustomText style={{ color: "red" }}>{error}</CustomText>
+        <CustomText style={{ color: "red", marginHorizontal: 15 }}>
+          {error}
+        </CustomText>
       )}
     </View>
   );

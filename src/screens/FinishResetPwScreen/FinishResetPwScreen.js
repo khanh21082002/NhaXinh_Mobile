@@ -22,9 +22,9 @@ export const FinishResetPwScreen = (props) => {
         <LottieView
           source={require("../../components/IconAnimation/mail-done.json")}
           autoPlay
-          loop={false}
+          loop
           resizeMode='cover'
-          style={{ height: 130 }}
+          style={{ height: 130 , width: 130 }}
         />
         <CustomText style={{ marginVertical: 20 }}>
           <CustomText

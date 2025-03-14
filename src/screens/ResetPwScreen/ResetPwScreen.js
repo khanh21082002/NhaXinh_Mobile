@@ -17,22 +17,36 @@ import Icon from 'react-native-vector-icons/Feather';
 //Redux
 import { useDispatch, useSelector } from "react-redux";
 // Action
-import { ResetPassword } from "../../reducers";
+import { ChangePassword } from "../../reducers";
 import Loader from "../../components/Loaders/Loader";
 // Thay thế expo-secure-store bằng AsyncStorage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppColors } from "../../styles";
+import { Header } from "./components";
 
 //Validation
 const validate = (values) => {
   const errors = {};
 
-  if (!values.password) {
-    errors.password = "Mật khẩu không được bỏ trống";
-  } else if (values.password.length < 6) {
-    errors.password = "Mật khẩu phải nhiều hơn hoặc bằng 6 ký tự";
+  if (!values.newpassword) {
+    errors.newpassword = "Mật khẩu không được bỏ trống";
+  } else if (values.newpassword.length < 6) {
+    errors.newpassword = "Mật khẩu phải nhiều hơn hoặc bằng 6 ký tự";
   }
-  if (values.confirmpassword !== values.password) {
+
+  if (!values.oldpassword) {
+    errors.oldpassword = "Mật khẩu không được bỏ trống";
+  } else if (values.oldpassword.length < 6) {
+    errors.oldpassword = "Mật khẩu phải nhiều hơn hoặc bằng 6 ký tự";
+  }
+
+  if (!values.confirmpassword) {
+    errors.confirmpassword = "Mật khẩu không được bỏ trống";
+  } else if (values.confirmpassword.length < 6) {
+    errors.confirmpassword = "Mật khẩu phải nhiều hơn hoặc bằng 6 ký tự";
+  }
+
+  if (values.confirmpassword !== values.newpassword) {
     errors.confirmpassword = "Mật khẩu xác nhận không trùng khớp";
   }
 
@@ -42,61 +56,64 @@ const validate = (values) => {
 const resetForm = (props) => {
   const { handleSubmit, reset } = props;
   const dispatch = useDispatch();
-  const [showPass, setShowPass] = useState(false);
+  const [showOldPass, setShowOldPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
   const loading = useSelector((state) => state.auth.isLoading);
   const [showConfirmPass, setshowConfirmPass] = useState(false);
   const url = props.route.params;
-  
+
   const submit = async (values) => {
     try {
-      await dispatch(ResetPassword(values.password, url));
+      await dispatch(ChangePassword(values.oldpassword, values.newpassword));
 
-      // Sử dụng AsyncStorage thay cho expo-secure-store để xoá item
-      await AsyncStorage.removeItem('secretKey');  // Thay thế bằng tên key phù hợp trong ứng dụng của bạn
+      await AsyncStorage.removeItem('secretKey');
 
       Keyboard.dismiss();
       await reset();
-      Alert.alert("Reset Successfully", "You can login now", [
+      Alert.alert("Thông báo", "Thay đổi mật khẩu thành công!", [
         {
           text: "Okay",
           onPress: () => {
-            props.navigation.navigate("Home");
+            props.navigation.navigate("HomeTab");
           },
         },
       ]);
     } catch (err) {
-      alert(err);
+      // alert(err);
+      Alert.alert("Thông báo", err.message, [{ text: "OK" }]);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {loading ? <Loader /> : <></>}
-      <TouchableOpacity
-        onPress={() => {
-          props.navigation.goBack();
-        }}
-        style={{ position: "absolute", top: 50, left: 20 }}
-      >
-        <Icon
-          name="arrow-left-circle"
-          size={30}
-          color={AppColors.primary}
-        />
-      </TouchableOpacity>
+      <Header navigation={props.navigation} />
       <View style={styles.content}>
-        <CustomText style={styles.title}> Reset Password </CustomText>
+        <CustomText style={styles.title}>Bạn muốn đổi mật khẩu?</CustomText>
         <Field
-          name="password"
+          name="oldpassword"
           keyboardType="default"
-          label="Mật Khẩu"
+          label="Mật Khẩu Cũ"
           component={renderField}
-          secureTextEntry={!showPass ? true : false}
-          placeholder="Mật khẩu của bạn"
-          icon="lock-outline"
-          passIcon="pass"
-          showPass={showPass}
-          setShowPass={setShowPass}
+          secureTextEntry={!showOldPass ? true : false}
+          placeholder="Mật khẩu cũ"
+          icon="lock"
+          passIcon="oldpass"
+          showOldPass={showOldPass}
+          setShowOldPass={setShowOldPass}
+        />
+
+        <Field
+          name="newpassword"
+          keyboardType="default"
+          label="Mật Khẩu Mới"
+          component={renderField}
+          secureTextEntry={!showNewPass ? true : false}
+          placeholder="Mật khẩu mới"
+          icon="lock"
+          passIcon="newpass"
+          showNewPass={showNewPass}
+          setShowNewPass={setShowNewPass}
         />
         <Field
           name="confirmpassword"
@@ -105,8 +122,8 @@ const resetForm = (props) => {
           component={renderField}
           secureTextEntry={!showConfirmPass ? true : false}
           placeholder="Xác nhận mật khẩu"
-          passIcon="confirm"
-          icon="lock-outline"
+          passIcon="confirmpass"
+          icon="lock"
           showConfirmPass={showConfirmPass}
           setshowConfirmPass={setshowConfirmPass}
         />
@@ -115,7 +132,7 @@ const resetForm = (props) => {
           style={{ marginVertical: 10, alignItems: "center" }}
         >
           <View style={styles.signIn}>
-            <CustomText style={styles.textSign}>Reset Your Password</CustomText>
+            <CustomText style={styles.textSign}>Xác nhận</CustomText>
           </View>
         </TouchableOpacity>
       </View>

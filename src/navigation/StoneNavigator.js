@@ -187,6 +187,7 @@ export const ProfileStackScreen = () => (
     <ProductStack.Screen name="TermsOfUse" component={TermsOfUseScreen} />
     <ProductStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
     <ProductStack.Screen name="PaymentPolicy" component={PaymentPolicyScreen} />
+    <ProductStack.Screen name="ResetPw" component={ResetPwScreen} />
   </ProfileStack.Navigator>
 );
 

@@ -20,6 +20,7 @@ export const OtherSelection = () => {
     { icon: "information-circle-outline", title: "Điều khoản sử dụng", screen: "TermsOfUse" },
     { icon: "lock-open-outline", title: "Chính sách bảo mật", screen: "PrivacyPolicy" },
     { icon: "cash-outline", title: "Chính sách thanh toán", screen: "PaymentPolicy" },
+    { icon: "lock-closed-outline", title: "Đổi mật khẩu", screen: "ResetPw" },
   ];
 
   const navigation = useNavigation();

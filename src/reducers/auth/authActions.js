@@ -275,26 +275,26 @@ export const UploadProfilePic = (imageUri, filename, type) => {
 };
 
 //ForgetPassword
-export const ForgetPassword = (email) => {
+export const ForgetPassword = (Email) => {
   return async (dispatch) => {
     dispatch({
       type: AUTH_LOADING,
     });
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL_NHAXINH}/Login/ResetPassword`, {
+        fetch(`${API_URL_NHAXINH}/Login/ResetPassword?email=${Email}`, {
           headers: {
             Accept: 'application/json',
+            'Content-Type': 'application/json',
           },
           method: 'POST',
           body: JSON.stringify({
-            email,
           }),
         }),
       );
-      console.log('response', response);
       if (!response.ok) {
         const errorResData = await response.json();
+        console.log(errorMessage);
         dispatch({
           type: AUTH_FAILURE,
         });
@@ -310,29 +310,30 @@ export const ForgetPassword = (email) => {
 };
 
 //ChangePassword
-export const ResetPassword = (email) => {
-  return async (dispatch) => {
+export const ChangePassword = (oldpassword, newpassword) => {
+  return async (dispatch , getState) => {
     dispatch({
       type: AUTH_LOADING,
     });
+    const jwtToken = getState().auth.token;
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL}/Login/ResetPassword`, {
+        fetch(`${API_URL_NHAXINH}/Profile/UpdateProfilePassword?oldPass=${oldpassword}&newPass=${newpassword}`, {
           headers: {
+            Authorization: `Bearer ${jwtToken}`,
             Accept: 'application/json',
           },
           method: 'POST',
           body: JSON.stringify({
-            email
           }),
         }),
       );
+      const responseJson = await response.json();
       if (!response.ok) {
-        const errorResData = await response.json();
         dispatch({
           type: AUTH_FAILURE,
         });
-        throw new Error(errorResData.err);
+        throw new Error(responseJson);
       }
       dispatch({
         type: RESET_PASSWORD,
