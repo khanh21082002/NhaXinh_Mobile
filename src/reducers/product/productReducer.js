@@ -1,5 +1,6 @@
 import {
   FETCH_PRODUCTS,
+  FETCH_COLLECTIONS,
   PRODUCT_LOADING,
   PRODUCT_FAILURE,
 } from "./productActions";
@@ -7,6 +8,7 @@ import { FIRST_OPEN } from "./checkFirstTimeActions";
 
 const initialState = {
   products: [],
+  collections: [],
   isFirstOpen: false,
   isLoading: false,
 };
@@ -26,6 +28,12 @@ export const productReducer = (state = initialState, action) => {
       return {
         ...state,
         products: [...action.products],
+        isLoading: false,
+      };
+    case FETCH_COLLECTIONS:
+      return {
+        ...state,
+        collections: [...action.collections],
         isLoading: false,
       };
     case FIRST_OPEN: {

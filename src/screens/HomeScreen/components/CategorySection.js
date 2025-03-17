@@ -15,10 +15,10 @@ export class CategorySection extends React.PureComponent {
     const { data, name, navigation } = this.props;
 
     const categorizedData = data.reduce((acc, item) => {
-      if (!acc[item.category]) {
-        acc[item.category] = [];
+      if (!acc[item.categoryName]) {
+        acc[item.categoryName] = [];
       }
-      acc[item.category].push(item);
+      acc[item.categoryName].push(item);
       return acc;
     }, {});
 

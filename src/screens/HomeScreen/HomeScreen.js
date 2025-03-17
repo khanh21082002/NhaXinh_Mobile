@@ -44,7 +44,7 @@ export const HomeScreen = ({ navigation }) => {
     };
     fetching();
   }, [user.id]);
-
+;
   // Animated Scroll Handler
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -53,13 +53,13 @@ export const HomeScreen = ({ navigation }) => {
   });
 
   const groupedProducts = products.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
+    if (!acc[item.categoryName]) {
+      acc[item.categoryName] = [];
     }
-    acc[item.category].push(item);
+    acc[item.categoryName].push(item);
     return acc;
   }, {});
-
+ 
   return (
     <Provider>
       {isLoading ? (

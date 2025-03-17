@@ -62,7 +62,7 @@ export const Header = ({ navigation, scrollY, item }) => {
           <CustomText
             style={{ fontSize: 16, color: "#fff", fontWeight: "500" }}
           >
-            {item.title}
+            {item.name}
           </CustomText>
         </Animated.View>
         <View style={styles.shareIcon}>
@@ -87,7 +87,11 @@ export const Header = ({ navigation, scrollY, item }) => {
         }}
       ></Animated.View>
       <Animated.Image
-        source={{ uri: item.image }}
+        source={
+          item.images && item.images.length > 0
+            ? {uri: item.images.find(image => image.isPrimary)?.imageUrl} 
+            : require('../../../assets/images/default-error-image.png')
+        }
         style={[
           styles.image,
           {

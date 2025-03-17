@@ -17,14 +17,14 @@ export const DetailBody = ({ item, color }) => {
         <>
           <Animatable.View animation="lightSpeedIn" delay={500} style={styles.footer_header}>
             <CustomText selectable={true} style={{ ...styles.title, color }}>
-              {item.title}
+              {item.name}
             </CustomText>
             <NumberFormat style={{ color: "#fff", fontSize: 13 }} price={item.price} color={color} />
           </Animatable.View>
 
-          <View style={{ flexDirection: "row", marginTop: 10 }}>
+          {/* <View style={{ flexDirection: "row", marginTop: 10 }}>
             <StarRating rating={item.rating.rate} color={color} />
-          </View>
+          </View> */}
 
           <TouchableOpacity onPress={() => navigation.navigate("AR")} style={styles.arButton}>
             <AntDesign name="camera" size={20} color="#fff" />
@@ -36,16 +36,20 @@ export const DetailBody = ({ item, color }) => {
               Chi tiết
             </CustomText>
             <View style={styles.infoContainer}>
-              <CustomText>Màu sắc: </CustomText>
-              <CustomText style={{ color: color }}>{item.color}</CustomText>
+              <CustomText>Chiều dài: </CustomText>
+              <CustomText style={{ color: color }}>{item.dimensionsLength} cm</CustomText>
             </View>
             <View style={styles.infoContainer}>
-              <CustomText>Tình trạng: </CustomText>
-              <CustomText>{item.standard}</CustomText>
+              <CustomText>Chiều rộng: </CustomText>
+              <CustomText style={{ color: color }}>{item.dimensionsWidth} cm</CustomText>
             </View>
             <View style={styles.infoContainer}>
-              <CustomText>Xuất xứ: </CustomText>
-              <CustomText>{item.origin}</CustomText>
+              <CustomText>Chiều cao: </CustomText>
+              <CustomText style={{ color: color }}>{item.dimensionsHeight} cm</CustomText>
+            </View>
+            <View style={styles.infoContainer}>
+              <CustomText>Chất liệu: </CustomText>
+              <CustomText>{item.materialName}</CustomText>
             </View>
             <CustomText style={{ ...styles.title, textDecorationLine: "underline", fontWeight: "500", marginBottom: 10 }}>
               Miêu tả

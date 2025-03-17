@@ -6,4 +6,4 @@ export const STRIPE_PUBLISHABLE_KEY =
 
 export const API_URL_VN = "https://provinces.open-api.vn/api"
 export const GEMINI_API_KEY ="AIzaSyBy4NDQDWE10oFYBeafsoWS9BEoqwv6nrs";
-export const API_URL_NHAXINH = "http://192.168.0.103:5217/api";
+export const API_URL_NHAXINH = "http://192.168.0.102:5217/api";

@@ -13,7 +13,7 @@ export const ProductScreen = (props) => {
   const [productsFilter, setproductsFilter] = useState(products);
   const searchFilterFunction = (text) => {
     const data = products.filter((product) =>
-      product.title.toLowerCase().includes(text.toLowerCase())
+      product.name.toLowerCase().includes(text.toLowerCase())
     );
     setproductsFilter(data);
   };

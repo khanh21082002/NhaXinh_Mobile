@@ -46,7 +46,7 @@ export const ProductBody = ({
         </CustomText>
       ) : (
         <FlatList
-          data={DATA} // Use the flat data for FlatList
+          data={DATA} 
           keyExtractor={(item, index) => (item?._id ? item._id.toString() : `item-${index}`)}
           renderItem={({ item }) => (
             <View style={styles.itemWrapper}>

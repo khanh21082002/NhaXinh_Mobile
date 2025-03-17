@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   View,
   TouchableOpacity,
@@ -6,32 +6,26 @@ import {
   StyleSheet,
   Dimensions,
   Image,
-} from "react-native";
+} from 'react-native';
 //import CustomText
-import CustomText from "../../../components/UI/CustomText";
+import CustomText from '../../../components/UI/CustomText';
 //icon
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 //Color
-import Colors from "../../../utils/Colors";
+import Colors from '../../../utils/Colors';
 //number format
-import NumberFormat from "../../../components/UI/NumberFormat";
+import NumberFormat from '../../../components/UI/NumberFormat';
 //PropTypes check
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-const { width, height } = Dimensions.get("window");
+const {width, height} = Dimensions.get('window');
 
 export class ModalComp extends React.PureComponent {
   render() {
-    const {
-      item,
-      color,
-      modalVisible,
-      setModalVisible,
-      navigation,
-    } = this.props;
+    const {item, color, modalVisible, setModalVisible, navigation} = this.props;
     const moveToCart = () => {
       setModalVisible(false);
-      navigation.navigate("Cart");
+      navigation.navigate('Cart');
     };
 
     return (
@@ -39,60 +33,61 @@ export class ModalComp extends React.PureComponent {
         style={{
           flex: 1,
         }}
-        animationType='slide'
+        animationType="slide"
         transparent={true}
-        visible={modalVisible}
-      >
+        visible={modalVisible}>
         <View style={styles.modalContainer}></View>
         <View style={styles.modal}>
           <TouchableOpacity
-            animation='zoomIn'
+            animation="zoomIn"
             style={styles.close}
-            onPress={() => setModalVisible(false)}
-          >
+            onPress={() => setModalVisible(false)}>
             <MaterialCommunityIcons
-              name='window-close'
+              name="window-close"
               size={24}
               color={color}
             />
           </TouchableOpacity>
 
           <View
-            style={{ width: "90%", flexDirection: "row", alignItems: "center" }}
-          >
+            style={{width: '90%', flexDirection: 'row', alignItems: 'center'}}>
             <MaterialCommunityIcons
-              name='check-circle-outline'
+              name="check-circle-outline"
               color={color}
               size={20}
             />
-            <CustomText style={{ ...styles.success, color }}>
+            <CustomText style={{...styles.success, color}}>
               Sản phẩm đã được thêm vào giỏ hàng
             </CustomText>
           </View>
           <View style={styles.modelInfo}>
-            <View
-              style={{ borderRadius: 20, width: "45%", overflow: "hidden" }}
-            >
+            <View style={{borderRadius: 20, width: '45%', overflow: 'hidden'}}>
               <Image
-                source={{ uri: item.image }}
+                source={
+                  item.images && item.images.length > 0
+                    ? {
+                        uri: item.images.find(image => image.isPrimary)
+                          ?.imageUrl,
+                      }
+                    : require('../../../assets/images/default-error-image.png')
+                }
                 style={{
                   height: 100,
-                  resizeMode: "stretch",
+                  resizeMode: 'stretch',
                 }}
               />
             </View>
             <View style={styles.quantity}>
               <View>
-                <CustomText style={{ ...styles.title, fontSize: 15 }}>
+                <CustomText style={{...styles.title, fontSize: 15}}>
                   {item.filename}
                 </CustomText>
-                <CustomText style={{ fontSize: 12, color: Colors.grey }}>
+                <CustomText style={{fontSize: 12, color: Colors.grey}}>
                   Cung cấp bởi Nhà Xinh
                 </CustomText>
               </View>
               <CustomText
-                style={{ marginTop: 5, fontSize: 14, color: Colors.text }}
-              >
+                style={{marginTop: 5, fontSize: 14, color: Colors.text}}>
                 Thành tiền:
               </CustomText>
               <NumberFormat price={item.price} />
@@ -101,9 +96,8 @@ export class ModalComp extends React.PureComponent {
           <View
             style={{
               height: 55,
-              justifyContent: "center",
-            }}
-          >
+              justifyContent: 'center',
+            }}>
             <TouchableOpacity
               style={[
                 styles.addCart,
@@ -111,8 +105,7 @@ export class ModalComp extends React.PureComponent {
                   backgroundColor: color,
                 },
               ]}
-              onPress={moveToCart}
-            >
+              onPress={moveToCart}>
               <CustomText style={styles.actionText}>Xem Giỏ Hàng</CustomText>
             </TouchableOpacity>
           </View>
@@ -133,23 +126,23 @@ ModalComp.propTypes = {
 const styles = StyleSheet.create({
   actionText: {
     fontSize: 15,
-    textAlign: "center",
-    color: "#fff",
+    textAlign: 'center',
+    color: '#fff',
   },
 
   modalContainer: {
-    position: "absolute",
-    backgroundColor: "black",
+    position: 'absolute',
+    backgroundColor: 'black',
     opacity: 0.7,
     top: 0,
     width: width,
     height: height,
   },
   modal: {
-    backgroundColor: "#fff",
-    width: "100%",
+    backgroundColor: '#fff',
+    width: '100%',
     bottom: 0,
-    position: "absolute",
+    position: 'absolute',
     zIndex: 10,
     paddingVertical: 20,
     paddingHorizontal: 20,
@@ -157,34 +150,34 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
   },
   addCart: {
-    width: "75%",
+    width: '75%',
     borderRadius: 10,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginVertical: 30,
     height: 50,
-    width: "100%",
+    width: '100%',
   },
   success: {
     marginLeft: 10,
     fontSize: 15,
   },
   close: {
-    position: "absolute",
+    position: 'absolute',
     top: 20,
     right: 10,
     zIndex: 20,
   },
   modelInfo: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
     marginVertical: 20,
   },
   quantity: {
-    width: "48%",
-    flexDirection: "column",
-    alignItems: "flex-start",
+    width: '48%',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     marginLeft: 15,
   },
 });
