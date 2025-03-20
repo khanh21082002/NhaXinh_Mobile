@@ -60,8 +60,7 @@ export const SignUp = (firstname,lastname, email, password ,rePassword) => {
         });
         throw new Error(errorResData);
       }
-      const resData = await response.json();
-      console.log("Kết quả từ API:", resData);     
+      const resData = await response.json();    
         dispatch({ type: SIGN_UP });
     } catch (err) {
       throw err;
@@ -89,7 +88,6 @@ export const SentOTP = (email , Otp) => {
           }),
         }),
       );
-      console.log('response', response);
       if (!response.ok) {
         const errorResData = await response.json();
         dispatch({
@@ -137,13 +135,12 @@ export const Login = (email, password) => {
         throw new Error(errorResData);
       }
       const resData = await response.json();
-      console.log('resData', resData);
       let decodedToken;
       try {
         decodedToken = jwtDecode(resData);
-        console.log('Thông tin từ token:', decodedToken);
+        
       } catch (decodeError) {
-        console.error('Lỗi giải mã token:', decodeError.message);
+        
         throw new Error('Lỗi token không hợp lệ');
       }
       //Get User
@@ -162,7 +159,7 @@ export const Login = (email, password) => {
       }
 
       const userData = await userResponse.json();
-      console.log('Dữ liệu người dùng:', userData);
+      
 
       saveDataToStorage('users', userData);
       dispatch(setLogoutTimer(60 * 60 * 1000));
@@ -242,7 +239,7 @@ export const UploadProfilePic = (imageUri, filename, type) => {
       type: type,
     });
     try {
-      console.log('FormData gửi đi:', formData);
+     
       const response = await timeoutPromise(
         fetch(`${API_URL_NHAXINH}/Profile/UpdateProfileImage`, {
           headers: {
@@ -254,7 +251,7 @@ export const UploadProfilePic = (imageUri, filename, type) => {
         }),
       );
 
-      console.log('Response:', response);
+      
       if (!response.ok) {
         const errorResData = await response.json();
         console.error("Error:", errorResData);
@@ -294,7 +291,6 @@ export const ForgetPassword = (Email) => {
       );
       if (!response.ok) {
         const errorResData = await response.json();
-        console.log(errorMessage);
         dispatch({
           type: AUTH_FAILURE,
         });

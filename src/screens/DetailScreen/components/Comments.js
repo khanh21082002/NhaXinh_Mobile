@@ -41,9 +41,9 @@ export const Comments = () => {
           <Image
             style={styles.profilePic}
             source={
-              user.profilePicture?.length === 0
+              user.avatarUrl?.length === 0
                 ? require("../../../assets/images/defaultprofile.jpg")
-                : { uri: user.profilePicture }
+                : { uri: user.avatarUrl }
             }
           />
           <TextInput

@@ -47,7 +47,7 @@ export const ActionButton = ({
       setShowSnackbar(true);
     } else {
       try {
-        await dispatch(addToCart(item, user.token));
+        //await dispatch(addToCart(item, user.token));
         setModalVisible(true);
       } catch (err) {
         throw err;

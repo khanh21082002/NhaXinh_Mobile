@@ -51,6 +51,27 @@ export const DetailBody = ({ item, color }) => {
               <CustomText>Chất liệu: </CustomText>
               <CustomText>{item.materialName}</CustomText>
             </View>
+            <View style={styles.infoContainer}>
+              <CustomText>Danh mục sản phẩm: </CustomText>
+              <CustomText>{item.categoryName}</CustomText>
+            </View>
+            <View style={styles.infoContainer}>
+              <CustomText>Danh mục phụ: </CustomText>
+              <CustomText>{item.subCategoryName}</CustomText>
+            </View>
+            <View style={styles.infoContainer}>
+              <CustomText>Bộ sưu tập: </CustomText>
+              <CustomText>{item.collectionName}</CustomText>
+            </View>
+            <View style={styles.infoContainer}>
+              <CustomText>Yêu cầu lắp ráp: </CustomText>
+              {item.assemblyRequired ? (
+                <CustomText style={{ color: color }}>Yêu cầu</CustomText>
+              ) : (
+                <CustomText style={{ color: color }}>Không yêu cầu</CustomText>
+              )
+              }
+            </View>
             <CustomText style={{ ...styles.title, textDecorationLine: "underline", fontWeight: "500", marginBottom: 10 }}>
               Miêu tả
             </CustomText>

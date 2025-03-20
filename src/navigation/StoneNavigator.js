@@ -182,7 +182,12 @@ export const ProfileStackScreen = () => (
     <ProfileStack.Screen name="Profile" component={ProfileScreen} />
     <ProfileStack.Screen name="ProfileEdit" component={EditProfileScreen} />
     <ProfileStack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
+
     <ProfileStack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
+    <ProfileStack.Screen name="BankList" component={BankListScreen} />
+    <ProfileStack.Screen name="BankAccount" component={BankAccountScreen} />
+
+
     <ProductStack.Screen name="Setting" component={SettingScreen} />
     <ProductStack.Screen name="TermsOfUse" component={TermsOfUseScreen} />
     <ProductStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
@@ -251,10 +256,6 @@ const Tab = createMaterialBottomTabNavigator();
 
 export const TabScreen = () => {
   const carts = useSelector((state) => state.cart.cartItems);
-  console.log("Carts:", carts);
-  console.log("Carts.items:", carts?.products);
-  console.log("Carts.items.length:", carts?.products?.length);
-
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -301,7 +302,7 @@ export const TabScreen = () => {
         component={CartStackScreen}
         options={() => ({
           tabBarLabel: 'Giỏ hàng',
-          tabBarBadge: carts.products?.length === 0 ? null : carts.products?.length,
+          tabBarBadge: carts.items?.length === 0 ? null : carts.items?.length,
         })}
       />
       <Tab.Screen

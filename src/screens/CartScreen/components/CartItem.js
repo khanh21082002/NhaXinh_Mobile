@@ -20,6 +20,7 @@ import PropTypes from "prop-types";
 export class CartItem extends React.PureComponent {
   render() {
     const { item, onAdd, onDes, onRemove  } = this.props;
+    // console.log("item", item.product);
     const AddItemHandler = async () => {
       await onAdd();
     };
@@ -53,7 +54,11 @@ export class CartItem extends React.PureComponent {
               resizeMode: "stretch",
               borderRadius: 5,
             }}
-            source={{ uri: item.product.image }}
+            source={
+              item.product.images && item.product.images.length > 0
+                ? {uri: item.product.images.find(image => image.isPrimary)?.imageUrl} 
+                : require('../../../assets/images/default-error-image.png')
+            }
           />
         </View>
         <View style={styles.right}>

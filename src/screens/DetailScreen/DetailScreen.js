@@ -10,11 +10,11 @@ import {
   Header,
   DetailBody,
   ActionButton,
-  ModalComp,
   Comments,
 } from './components';
 import { colorCheck } from '../../utils/Tools';
 import { AppColors } from '../../styles';
+import ModalComp from './components/ModalComp';
 
 export const DetailScreen = (props) => {
   const scrollY = new Animated.Value(0);

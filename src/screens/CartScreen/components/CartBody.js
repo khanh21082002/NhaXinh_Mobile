@@ -9,7 +9,7 @@ import {
 //Redux
 import { useDispatch } from "react-redux";
 //Action
-import { removeFromCart, addToCart, decCartQuantity } from "../../../reducers";
+import { removeFromCart, updateCart, decCartQuantity } from "../../../reducers";
 //Text
 import CustomText from "../../../components/UI/CustomText";
 //Colors
@@ -29,7 +29,7 @@ export const CartBody = ({
   isRefreshing,
 }) => {
   const dispatch = useDispatch();
-  const onRemove = (itemId) => {
+  const onRemove = (cartId) => {
     Alert.alert("Bỏ giỏ hàng", "Bạn có chắc bỏ sản phẩm khỏi giỏ hàng?", [
       {
         text: "Hủy",
@@ -37,11 +37,12 @@ export const CartBody = ({
       {
         text: "Đồng ý",
         onPress: () => {
-          dispatch(removeFromCart(carts.id, itemId));
+          dispatch(removeFromCart(cartId));
         },
       },
     ]);
   };
+
   return (
     <View style={styles.footer}>
       {Object.keys(user).length === 0 ? (
@@ -53,7 +54,7 @@ export const CartBody = ({
             </TouchableOpacity>
           </View>
         </View>
-      ) : carts.items?.length === 0 ? (
+      ) : carts.items.length === 0 ? (
         <View style={styles.center}>
           <CustomText style={{ fontSize: 16 }}>
             Chưa có sản phẩm nào trong giỏ hàng
@@ -62,27 +63,30 @@ export const CartBody = ({
       ) : (
         <View style={{ marginBottom: 80 }}>
           <FlatList
-            data={carts.products}
+            data={carts.items}
             onRefresh={loadCarts}
             refreshing={isRefreshing}
-            keyExtractor={(item) => item.productId.toString()}
+            keyExtractor={(item) => item.cartId}
             renderItem={({ item }) => {
               const productDetails = products.find(
-                (p) => p.id === item.productId
+                (p) => p.productId === item.productId
               );
-              if (!productDetails) return null;
+              if (!productDetails){ 
+                // console.error("Không tìm thấy sản phẩm cho item:", item);
+                return null;
+              };
               return (
                 <CartItem
                   item={{
                     ...item,
                     product: productDetails,
                   }}
-                  onRemove={() => onRemove(item.productId)}
+                  onRemove={() => onRemove(item.cartId)}
                   onAdd={() => {
-                    dispatch(addToCart(item, user.token));
+                    dispatch(updateCart(item.cartId, item.quantity + 1));
                   }}
                   onDes={() => {
-                    dispatch(decCartQuantity(carts.id, item.productId));
+                    dispatch(updateCart(item.cartId, item.quantity - 1));
                   }}                
                 />
               );

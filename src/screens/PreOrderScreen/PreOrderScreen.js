@@ -15,6 +15,7 @@ export const PreOrderScreen = (props) => {
   const isFocused = useIsFocused();
   const [loading, setLoading] = useState(true);
   const carts = useSelector((state) => state.cart.cartItems);
+  const productList = useSelector((state) => state.store.products);
   const { cartItems, total, cartId } = props.route.params;
   const [error, setError] = useState("");
   //Can Toi uu lai
@@ -51,7 +52,7 @@ export const PreOrderScreen = (props) => {
     setError(error);
   };
   let orderItems = [];
-  cartItems.products.map((item) => {
+  cartItems.items?.map((item) => {
     orderItems.push({ item: item.productId, quantity: item.quantity });
   });
 
@@ -108,7 +109,7 @@ export const PreOrderScreen = (props) => {
               checkValidation={checkValidation}
             />
             <Address getInfo={getInfo} />
-            <SummaryOrder cartItems={cartItems} total={total} />
+            <SummaryOrder cartItems={cartItems} total={total} productList={productList} />
           </ScrollView>
           <TotalButton toPayment={toPayment} />
         </>

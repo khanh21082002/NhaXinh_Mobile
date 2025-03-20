@@ -22,8 +22,8 @@ export const CartScreen = (props) => {
   const cartId = carts.id;
   const dispatch = useDispatch();
   let total = 0;
-  carts.products?.forEach((item) => {
-    const product = productList.find((p) => p.id === item.productId);
+  carts.items?.forEach((item) => {
+    const product = productList.find((p) => p.productId  === item.productId);
     if (product) {
       total += product.price * item.quantity;
     }
@@ -40,10 +40,9 @@ export const CartScreen = (props) => {
   }, [dispatch, setIsRefreshing]);
   useEffect(() => {
     loadCarts();
-  }, [user.id]);
+  }, []);
 
 
-  // console.log("cartItems",cartItems.id);
   return (
     <View style={styles.container}>
       <Header user={user} carts={carts} navigation={props.navigation} />
@@ -63,7 +62,7 @@ export const CartScreen = (props) => {
       ) : (
         <TotalButton
           total={total}
-          cartItems={cartItems}
+          cartItems={cartItems.items}
           cartId={String(cartId)}
           navigation={props.navigation}
         />
