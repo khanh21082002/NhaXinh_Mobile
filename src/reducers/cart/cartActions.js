@@ -78,9 +78,6 @@ export const addToCart = (ProductId, VariationId) => {
       }
       dispatch({
         type: 'ADD_CART',
-        cartItem: {
-          ...item,
-        },
       });
     } catch (err) {
       throw err;

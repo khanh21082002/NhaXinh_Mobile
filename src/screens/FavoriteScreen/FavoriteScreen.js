@@ -15,9 +15,12 @@ export const FavoriteScreen = ({ navigation }) => {
   const user = useSelector((state) => state.auth.user);
   const loading = useSelector((state) => state.fav.isLoading);
   const FavoriteProducts = useSelector((state) => state.fav.favoriteList);
+   const products = useSelector(state => state.store.products);
+
   const dispatch = useDispatch();
 
   const loadFavoriteProducts = useCallback(async () => {
+    if (Object.keys(user).length === 0) return;
     setIsRefreshing(true);
     try {
       await dispatch(fetchFavorite());
@@ -25,10 +28,10 @@ export const FavoriteScreen = ({ navigation }) => {
       alert(err.message);
     }
     setIsRefreshing(false);
-  }, [dispatch, setIsRefreshing]);
+  }, [dispatch, setIsRefreshing , user]);
   useEffect(() => {
     loadFavoriteProducts();
-  }, [user.userid]);
+  }, [user]);
 
   return (
     <View style={styles.container}>
@@ -39,6 +42,7 @@ export const FavoriteScreen = ({ navigation }) => {
         <FavoriteBody
           user={user}
           FavoriteProducts={FavoriteProducts}
+          products={products}
           navigation={navigation}
           loadFavoriteProducts={loadFavoriteProducts}
           isRefreshing={isRefreshing}

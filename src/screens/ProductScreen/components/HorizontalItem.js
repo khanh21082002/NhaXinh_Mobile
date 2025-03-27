@@ -12,6 +12,7 @@ import Colors from '../../../utils/Colors';
 import Number from '../../../components/UI/NumberFormat';
 import CustomText from '../../../components/UI/CustomText';
 import PropTypes from 'prop-types';
+import Messages from '../../../messages/user';
 
 export class HorizontalItem extends React.PureComponent {
   constructor(props) {
@@ -20,9 +21,22 @@ export class HorizontalItem extends React.PureComponent {
   }
 
   render() {
-    const {navigation, item} = this.props;
+    const {navigation, item , setModalVisible , setMessage , setShowSnackbar ,  user} = this.props;
     const toDetail = () => {
       navigation.navigate('Detail', {item});
+    };
+
+    const toModel = async () => {
+      if (Object.keys(user).length === 0) {
+        setMessage(Messages['user.login.require']);
+        setShowSnackbar(true);
+      } else {
+        try {       
+          setModalVisible(true);
+        } catch (err) {
+          throw err;
+        }
+      }
     };
 
     return (
@@ -53,7 +67,7 @@ export class HorizontalItem extends React.PureComponent {
           </CustomText>
           <View style={styles.priceContainer}>
             <Number price={item.price} style={styles.price} />
-            <TouchableOpacity style={styles.cartButton}>
+            <TouchableOpacity onPress={toModel} style={styles.cartButton}>
               <AntDesign name="shoppingcart" size={20} color="white" />
             </TouchableOpacity>
           </View>

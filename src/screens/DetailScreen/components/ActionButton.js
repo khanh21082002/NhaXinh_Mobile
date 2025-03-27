@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 //Action
 import { addToCart, removeFavorite, addFavorite } from '../../../reducers';
 import Messages from '../../../messages/user';
+import MessagesFavorite from '../../../messages/favorite';
 import Colors from '../../../utils/Colors';
 
 //PropTypes check
@@ -26,6 +27,7 @@ import PropTypes from 'prop-types';
 export const ActionButton = ({
   user,
   item,
+  wishlistId,
   color,
   setShowSnackbar,
   FavoriteProducts,
@@ -34,6 +36,7 @@ export const ActionButton = ({
 }) => {
   const dispatch = useDispatch();
   const cartLoading = useSelector((state) => state.cart.isLoading);
+  const FavoriteProductsLoading = useSelector((state) => state.fav.favoriteList.isLoading);
   const unmounted = useRef(false);
   useEffect(() => {
     return () => {
@@ -69,14 +72,17 @@ export const ActionButton = ({
           },
           {
             text: 'Đồng ý',
-            onPress: () => dispatch(removeFavorite(item._id)),
+            onPress: () => dispatch(removeFavorite(wishlistId)),
           },
         ],
       );
     } else {
+      setMessage(MessagesFavorite['favorite.add.success']);
+      setShowSnackbar(true);
       dispatch(addFavorite(item));
     }
   };
+
   return (
     <Animatable.View
       delay={1500}

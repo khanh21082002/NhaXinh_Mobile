@@ -38,7 +38,7 @@ const LocalNotification = () => {
     // Lên lịch thông báo
     const triggerNotificationHandler = () => {
       PushNotification.localNotificationSchedule({
-        message: "Hãy lựa chọn sự may mắn, mua sự thành công cùng với CatTuong",
+        message: "Chào mừng bằn đến với Nội Thất Nhà Xinh",
         date: new Date(Date.now() + 1000 * 60 * 60 * 24), // Đặt thời gian
         title: 'Ngày mới tốt lành bạn nhé ^^',
         userInfo: { mySpecialData: 'Some text' },

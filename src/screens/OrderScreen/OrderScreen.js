@@ -13,8 +13,10 @@ export const OrderScreen = ({ navigation }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const orders = useSelector((state) => state.order.orders);
+ const products = useSelector(state => state.store.products);
   const dispatch = useDispatch();
   const loadOrders = useCallback(async () => {
+    if (Object.keys(user).length === 0) return;
     setIsRefreshing(true);
     try {
       await dispatch(fetchOrder());
@@ -22,14 +24,18 @@ export const OrderScreen = ({ navigation }) => {
       alert(err.message);
     }
     setIsRefreshing(false);
-  }, [dispatch, setIsRefreshing]);
+  }, [dispatch, setIsRefreshing , user]);
   useEffect(() => {
     loadOrders();
-  }, [user.userid]);
+  }, [user]);
+
+  const sortedOrders = [...orders].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   return (
     <View style={styles.container}>
-      <Header navigation={navigation} />
+      {/* <Header navigation={navigation} /> */}
       {orders.isLoading ? (
         <View style={styles.centerLoader}>
           <SkeletonLoadingCart />
@@ -37,7 +43,8 @@ export const OrderScreen = ({ navigation }) => {
       ) : (
         <OrderBody
           user={user}
-          orders={orders}
+          orders={sortedOrders}
+          products={products}
           isRefreshing={isRefreshing}
           loadOrders={loadOrders}
           navigation={navigation}

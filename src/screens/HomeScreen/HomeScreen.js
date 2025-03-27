@@ -1,65 +1,88 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Dimensions, FlatList} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// Redux
+import React, {useEffect, useState, useRef, useMemo} from 'react';
+import {View, StyleSheet, FlatList, TouchableOpacity, Text} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {fetchProducts} from '../../reducers';
-// Colors
 import Colors from '../../utils/Colors';
-// Animation
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
 } from 'react-native-reanimated';
-// Components
-import {Carousel, Header, FloatButton, Categories} from './components';
-import Skeleton from '../../components/Loaders/SkeletonLoading';
-import Snackbar from '../../components/Notification/Snackbar';
-// FloatButton
 import {Portal, Provider} from 'react-native-paper';
-import SearchItem from './components/SearchItem';
+import {Carousel, Header, FloatButton} from './components';
+import Skeleton from '../../components/Loaders/SkeletonLoading';
 import SearchBar from './components/SearchBar';
-import CategorySection from './components/CategorySection';
+import Snackbar from '../../components/Notification/Snackbar';
+import {fetchCategories} from '../../reducers/category/categoryActions';
+import ProductItem from './components/ProductItem';
+import {AppColors} from '../../styles';
+import ModalComp from './components/ModalComp';
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
-// height
-const {height} = Dimensions.get('window');
 
 export const HomeScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  // Header Animation
   const scrollY = useSharedValue(0);
+
+  // Lấy dữ liệu từ Redux
   const user = useSelector(state => state.auth.user);
   const products = useSelector(state => state.store.products);
+  const categories = useSelector(state => state.category.categories);
   const isLoading = useSelector(state => state.store.isLoading);
-  const [showSnackbar, setShowSnackbar] = useState(false);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [message, setMessage] = useState('');
-  const notification = useSelector(state => state.auth.notification);
-  // Fetch API
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [color, setColor] = useState(AppColors.primary);
+
+  // Lấy danh sách sản phẩm và danh mục khi vào màn hình
   useEffect(() => {
-    const fetching = async () => {
-      try {
-        await dispatch(fetchProducts());
-      } catch (err) {
-        alert(err);
-      }
+    dispatch(fetchProducts());
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const checkColor = async () => {
+      const getColor = await colorCheck(products.color);
+      setColor(getColor);
     };
-    fetching();
-  }, [user.id]);
-  // Animated Scroll Handler
+    checkColor();
+  }, [products]);
+
+  // Khi chọn danh mục, tìm kiếm sản phẩm
+  const handleSelectCategory = category => {
+    if (selectedCategory === category.name) return;
+    setSelectedCategory(category.name);
+  };
+
+  const filteredProducts = useMemo(() => {
+    const sortedProducts = [...products].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+    );
+    if (!selectedCategory) return sortedProducts.slice(0, 12);
+    return sortedProducts.filter(
+      product => product.categoryName === selectedCategory,
+    );
+  }, [selectedCategory, products]);
+
   const onScroll = useAnimatedScrollHandler({
     onScroll: event => {
       scrollY.value = event.contentOffset.y;
     },
   });
 
-  const groupedProducts = products.reduce((acc, item) => {
-    if (!acc[item.categoryName]) {
-      acc[item.categoryName] = [];
-    }
-    acc[item.categoryName].push(item);
-    return acc;
-  }, {});
+  // Mở modal
+  const handleOpenModal = item => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
+
+  // Đóng modal
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setSelectedItem(null);
+  };
 
   return (
     <Provider>
@@ -67,60 +90,63 @@ export const HomeScreen = ({navigation}) => {
         <Skeleton />
       ) : (
         <View style={styles.container}>
-          {Object.keys(user).length === 0 ? (
-            <View />
-          ) : (
+          {/* {showSnackbar && (
+            <Snackbar checkVisible={showSnackbar} message={message} />
+          )} */}
+          {Object.keys(user).length === 0 ? null : (
             <Portal>
               <FloatButton />
             </Portal>
           )}
-          {showSnackbar && (
-            <Snackbar checkVisible={showSnackbar} message={message} />
-          )}
+
+          <Header style={{marginHorizontal: 8}} user={user} products={products} navigation={navigation} />
+          <View style={[styles.banner, {paddingTop: 70}]}>
+            <Carousel />
+          </View>
+          <View style={{ marginHorizontal: 8 }}>
+            <SearchBar
+              categories={categories}
+              onSelectCategory={handleSelectCategory}
+            />
+          </View>
+
           <AnimatedFlatList
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={styles.list}
             showsVerticalScrollIndicator={false}
-            ListHeaderComponent={() => (
-              <>
-                <Header
-                  user={user}
-                  products={products}
-                  navigation={navigation}
-                />
-                <View style={[styles.banner, {paddingTop: 70}]}>
-                  <Carousel />
-                </View>
-                <SearchBar
-                  onSearchChange={text => searchFilterFunction(text)}
-                />
-              </>
+            numColumns={2}
+            ListFooterComponent={() => (
+              <TouchableOpacity
+                style={styles.viewMoreButton}
+                onPress={() => navigation.navigate('Product')}>
+                <Text style={styles.viewMoreText}>Xem thêm</Text>
+              </TouchableOpacity>
             )}
             scrollEventThrottle={1}
             onScroll={onScroll}
-            data={Object.keys(groupedProducts)}
-            keyExtractor={item => item}
+            data={filteredProducts}
+            extraData={selectedCategory}
+            keyExtractor={(item, index) =>
+              item?.productId ? item.productId.toString() : `item-${index}`
+            }
             renderItem={({item}) => (
-              <CategorySection
+              <ProductItem
                 user={user}
-                name={item}
-                data={groupedProducts[item]}
+                item={item}
                 navigation={navigation}
-                setShowSnackbar={setShowSnackbar}
+                setModalVisible={() => handleOpenModal(item)}
                 setMessage={setMessage}
+                setShowSnackbar={setShowSnackbar}
               />
             )}
           />
-          {Object.keys(notification).length === 0 ? (
-            <View />
-          ) : (
-            <Snackbar
-              checkVisible={true}
-              message={
-                Object.keys(user).length === 0
-                  ? notification
-                  : notification + ' ' + user.firstName + ' ' + user.lastName
-              }
+          {selectedItem && (
+            <ModalComp
+              item={selectedItem}
+              color={color}
+              modalVisible={modalVisible}
+              setModalVisible={handleCloseModal}
+              navigation={navigation}
             />
           )}
         </View>
@@ -141,5 +167,22 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 0,
     paddingBottom: 20,
+    paddingHorizontal: 10,
+  },
+  viewMoreButton: {
+    backgroundColor: AppColors.primary,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 20,
+    marginVertical: 15,
+  },
+  viewMoreText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
+
+export default HomeScreen;

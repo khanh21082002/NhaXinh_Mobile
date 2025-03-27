@@ -33,14 +33,14 @@ const ModalComp = ({
   setModalVisible,
   navigation,
 }) => {
-  const [selectedVariation, setSelectedVariation] = useState(null); // useState hook
+  const [selectedVariation, setSelectedVariation] = useState(null);
   const dispatch = useDispatch();
   const cartLoading = useSelector(state => state.cart.isLoading);
 
   const handleVariationSelect = variation => {
     setSelectedVariation(variation);
   };
-
+  
   const moveToCart = async () => {
     const variationId = selectedVariation?.variationId || item.variations?.[0]?.variationId;
   

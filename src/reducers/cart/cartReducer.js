@@ -45,7 +45,6 @@ export const cartReducer = (state = initialState, action) => {
         isLoading: false,
       };
     case UPDATE_CART:
-      // console.log('Before update:', state.cartItems.items);
       return {
         ...state,
         cartItems: {

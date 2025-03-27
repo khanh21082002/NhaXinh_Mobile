@@ -26,10 +26,13 @@ export const DetailScreen = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   //Favorite
-  const FavoriteProducts = useSelector((state) =>
-    state.fav.favoriteList.some((product) => product._id === item._id)
-  );
+  const wishlist = useSelector((state) => state.fav.favoriteList);
+  const isFavorite = wishlist.some((product) => product.productId === item.productId);
 
+  const FavoriteProducts = useSelector((state) => state.fav.favoriteList);
+  const wishlistId = FavoriteProducts.find((p) => p.productId === item.productId)?.wishlistId;
+
+  
   useEffect(() => {
     const checkColor = async () => {
       const getColor = await colorCheck(item.color);
@@ -56,7 +59,8 @@ export const DetailScreen = (props) => {
 
           <ActionButton
             item={item}
-            FavoriteProducts={FavoriteProducts}
+            wishlistId={wishlistId}
+            FavoriteProducts={isFavorite}
             setShowSnackbar={setShowSnackbar}
             setModalVisible={setModalVisible}
             setMessage={setMessage}

@@ -1,13 +1,13 @@
 import 'react-native-gesture-handler';
-import React, { useState, useEffect } from 'react';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
+import {Provider} from 'react-redux';
 import ReduxThunk from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import { Text, StatusBar, View, Image } from 'react-native';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AppNavigator } from './src/navigation';
-import { reducer as formReducer } from 'redux-form';
+import {composeWithDevTools} from 'redux-devtools-extension';
+import {Text, StatusBar, View, Image, LogBox} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {AppNavigator} from './src/navigation';
+import {reducer as formReducer} from 'redux-form';
 import './src/utils/actionSheets';
 
 // Reducers
@@ -17,7 +17,9 @@ import {
   favoriteReducer,
   orderReducer,
   productReducer,
+  categoryReducer,
 } from './src/reducers';
+import LocalNotification from './src/components/Notification/LocalNotification';
 
 // Redux store
 const rootReducer = combineReducers({
@@ -26,10 +28,14 @@ const rootReducer = combineReducers({
   order: orderReducer,
   auth: authReducer,
   fav: favoriteReducer,
+  category: categoryReducer,
   form: formReducer,
 });
 
-const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(ReduxThunk)));
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(ReduxThunk)),
+);
 
 const LoadAssets = async () => {
   const imageAssets = [
@@ -38,7 +44,7 @@ const LoadAssets = async () => {
     require('./src/assets/images/banner4.jpg'),
     require('./src/assets/images/banner5.jpg'),
     require('./src/assets/images/banner6.jpg'),
-  ].map((img) => Image.prefetch(Image.resolveAssetSource(img).uri)); // Chuyển mỗi ảnh thành một Promise
+  ].map(img => Image.prefetch(Image.resolveAssetSource(img).uri)); // Chuyển mỗi ảnh thành một Promise
 
   return Promise.all([imageAssets]);
 };
@@ -49,7 +55,9 @@ export default function App() {
   useEffect(() => {
     LoadAssets()
       .then(() => setAssetLoaded(true))
-      .catch((err) => console.warn(err));
+      .catch(err => console.warn(err));
+
+    // LogBox.ignoreAllLogs(true);
   }, []);
 
   // if (!assetLoaded) {
@@ -62,9 +70,10 @@ export default function App() {
   // }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{flex: 1}}>
       <Provider store={store}>
         <StatusBar barStyle="dark-content" />
+        {/* <LocalNotification /> */}
         <AppNavigator />
       </Provider>
     </GestureHandlerRootView>

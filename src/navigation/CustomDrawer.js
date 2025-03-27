@@ -44,7 +44,7 @@ export default (props) => {
         text: "Đồng ý",
         onPress: () => {
           dispatch(LogoutAction());
-          props.navigation.navigate("Home");
+          props.navigation.navigate("HomeTab");
         },
       },
     ]);

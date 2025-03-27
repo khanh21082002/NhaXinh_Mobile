@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "1070339749221",
-    "project_id": "nhaxinh-67720",
-    "storage_bucket": "nhaxinh-67720.firebasestorage.app"
+    "project_number": "167612952725",
+    "project_id": "mealfresh-3b68f",
+    "storage_bucket": "mealfresh-3b68f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1070339749221:android:99d0986751133066789d8c",
+        "mobilesdk_app_id": "1:167612952725:android:72866e9d3b424e0aa92b9c",
         "android_client_info": {
-          "package_name": "com.NhaXinh"
+          "package_name": "com.example.mealfresh"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA_JuMRxRJiNAwMdf0XgxoOubQfmp7gw4Q"
+          "current_key": "AIzaSyD2EqhwHVsRTxvImLuM75k75x3e8SajAwk"
         }
       ],
       "services": {
@@ -26,7 +26,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1070339749221:android:bb7a5511de10ad2d789d8c",
+        "mobilesdk_app_id": "1:167612952725:android:81130e0ea4aa0169a92b9c",
         "android_client_info": {
           "package_name": "com.nhaxinh"
         }
@@ -34,7 +34,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA_JuMRxRJiNAwMdf0XgxoOubQfmp7gw4Q"
+          "current_key": "AIzaSyD2EqhwHVsRTxvImLuM75k75x3e8SajAwk"
         }
       ],
       "services": {

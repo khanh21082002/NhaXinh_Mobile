@@ -30,6 +30,7 @@ export const CartScreen = (props) => {
   });
   
   const loadCarts = useCallback(async () => {
+    if (Object.keys(user).length === 0) return;
     setIsRefreshing(true);
     try {
       await dispatch(fetchCart());
@@ -37,10 +38,11 @@ export const CartScreen = (props) => {
       alert(err);
     }
     setIsRefreshing(false);
-  }, [dispatch, setIsRefreshing]);
+  }, [dispatch, setIsRefreshing ,user]);
+
   useEffect(() => {
     loadCarts();
-  }, []);
+  }, [user]);
 
 
   return (

@@ -4,3 +4,5 @@ export * from "./favorite";
 export * from "./order";
 export * from "./product";
 export * from "./bank";
+export * from "./category";
+

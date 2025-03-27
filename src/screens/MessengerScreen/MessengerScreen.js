@@ -44,7 +44,7 @@ const MessengerScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header navigation={navigation} />
+      {/* <Header navigation={navigation} /> */}
       <MessengerBody
         messages={messages}
         user={user}

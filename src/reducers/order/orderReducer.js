@@ -25,14 +25,13 @@ export const orderReducer = (state = initialState, action) => {
     case FETCH_ORDER:
       return {
         ...state,
-        orders: action.orderData,
+        orders: action.orders,
         isLoading: false,
       };
     case ADD_ORDER:
-      const newOrder = action.orderItem;
       return {
         ...state,
-        orders: state.orders.concat(newOrder),
+        orders: [...state.orders, action.orderItem],
         isLoading: false,
       };
   }

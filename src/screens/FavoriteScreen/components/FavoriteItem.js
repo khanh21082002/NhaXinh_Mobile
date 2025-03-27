@@ -17,11 +17,12 @@ import { addToCart, removeFavorite } from "../../../reducers";
 //Color
 import Colors from "../../../utils/Colors";
 //number format
-import NumberFormat from "react-number-format";
+import Number from "../../../components/UI/NumberFormat";
 //Text
 import CustomText from "../../../components/UI/CustomText";
 //PropTypes check
 import PropTypes from "prop-types";
+
 
 export const renderRightAction = (text, color, action, x, progress) => {
   const trans = progress.interpolate({
@@ -74,7 +75,7 @@ export const FavoriteItem = ({ navigation, item }) => {
         },
         {
           text: "Đồng ý",
-          onPress: () => dispatch(removeFavorite(item._id)),
+          onPress: () => dispatch(removeFavorite(item.wishlistId)),
         },
       ]
     );
@@ -108,7 +109,7 @@ export const FavoriteItem = ({ navigation, item }) => {
       >
         <View style={styles.itemContainer}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("Detail", { item: item })}
+            onPress={() => navigation.navigate("Detail", { item: item.product })}
             style={{
               marginLeft: 5,
               width: "30%",
@@ -125,7 +126,11 @@ export const FavoriteItem = ({ navigation, item }) => {
                 resizeMode: "contain",
                 borderRadius: 10,
               }}
-              source={{ uri: item.thumb }}
+              source={
+                item.product.images && item.product.images.length > 0
+                  ? {uri: item.product.images.find(image => image.isPrimary)?.imageUrl} 
+                  : require('../../../assets/images/default-error-image.png')
+              }
               onLoadStart={() => {
                 setIsLoading(true);
               }}
@@ -146,11 +151,11 @@ export const FavoriteItem = ({ navigation, item }) => {
             )}
           </TouchableOpacity>
           <View style={styles.info}>
-            <CustomText style={styles.title}>{item.filename}</CustomText>
-            <CustomText style={styles.subText}>{item.type}</CustomText>
+            <CustomText style={styles.title}>{item.product.name}</CustomText>
+            <CustomText style={styles.subText}>{item.product.subCategoryName}</CustomText>
             <View style={styles.rateContainer}>
-              <NumberFormat
-                value={item.price}
+              <Number
+                price={item.product.price}
                 displayType={"text"}
                 thousandSeparator={true}
                 suffix={" đ"}
@@ -181,8 +186,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: Colors.light_grey,
     marginTop: 5,
-    borderRadius: 0,
+    borderRadius: 10,
     alignItems: "center",
+    marginHorizontal: 10,
+
+    
   },
   info: {
     height: "100%",

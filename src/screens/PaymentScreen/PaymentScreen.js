@@ -5,7 +5,7 @@ import Colors from '../../utils/Colors';
 import Loader from '../../components/Loaders/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 //Action
-import { addOrder, resetCart } from '../../reducers';
+import { addOrder, resetCart , CreateOrderFromCart  } from '../../reducers';
 //Text
 import CustomText from '../../components/UI/CustomText';
 import { Header, PaymentBody } from './components';
@@ -14,11 +14,12 @@ import { SummaryOrder } from '../PreOrderScreen/components';
 export const PaymentScreen = (props) => {
   const [loading, setLoading] = useState(true);
   const carts = useSelector((state) => state.cart.cartItems);
+  const productList = useSelector((state) => state.store.products);
   const cartLoading = useSelector((state) => state.cart.isLoading);
   const orderLoading = useSelector((state) => state.order.isLoading);
   let token = props.route.params.token;
   const [payByCard, setPayByCard] = useState(false);
-  const paymentMethod = payByCard ? 'Credit Card' : 'Cash';
+  const paymentMethod = payByCard ? 'banking' : 'Cash';
   const unmounted = useRef(false);
   useEffect(() => {
     return () => {
@@ -45,28 +46,42 @@ export const PaymentScreen = (props) => {
     total,
     cartId,
     fullAddress,
+    shippingAddress,
   } = props.route.params;
 
   //action Add Order
   const addOrderAct = async () => {
+    // try {
+    //   token = payByCard ? token : {};
+    //   await dispatch(
+    //     addOrder(
+    //       token,
+    //       orderItems,
+    //       name,
+    //       total,
+    //       paymentMethod,
+    //       fullAddress,
+    //       phone,
+    //     ),
+    //   );
+    //   await dispatch(resetCart(cartId));
+    //   props.navigation.navigate('FinishOrder');
+    // } catch (err) {
+    //   alert(err);
+    // }
     try {
-      token = payByCard ? token : {};
       await dispatch(
-        addOrder(
-          token,
-          orderItems,
-          name,
-          total,
-          paymentMethod,
+        CreateOrderFromCart(
           fullAddress,
-          phone,
-        ),
+          shippingAddress,
+          paymentMethod
+        )
       );
-      await dispatch(resetCart(cartId));
       props.navigation.navigate('FinishOrder');
     } catch (err) {
       alert(err);
     }
+
   };
 
   return (
@@ -83,7 +98,7 @@ export const PaymentScreen = (props) => {
               setPayByCard={setPayByCard}
               token={token}
             />
-            <SummaryOrder cartItems={carts.items} total={total} />
+            <SummaryOrder cartItems={carts.items} total={total} productList={productList} />
           </ScrollView>
           <View style={styles.total}>
             <View style={styles.orderButton}>

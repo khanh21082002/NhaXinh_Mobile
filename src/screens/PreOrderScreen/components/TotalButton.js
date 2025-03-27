@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   total: {
     width: '100%',
     position: 'absolute',
-    bottom: 20,
+    bottom: 0,
     left: 0,
     paddingHorizontal: 10,
   },

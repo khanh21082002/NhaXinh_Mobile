@@ -1,129 +1,121 @@
-import { API_URL } from "../../utils/Config";
-import { timeoutPromise } from "../../utils/Tools";
-export const FAVORITE_LOADING = "FAVORITE_LOADING";
-export const FAVORITE_FAILURE = "FAVORITE_FAILURE";
-export const FETCH_FAVORITE = "FETCH_FAVORITE";
-export const ADD_FAVORITE = "ADD_FAVORITE";
-export const REMOVE_FAVORITE = "REMOVE_FAVORITE";
+import {API_URL, API_URL_NHAXINH} from '../../utils/Config';
+import {timeoutPromise} from '../../utils/Tools';
+export const FAVORITE_LOADING = 'FAVORITE_LOADING';
+export const FAVORITE_FAILURE = 'FAVORITE_FAILURE';
+export const FETCH_FAVORITE = 'FETCH_FAVORITE';
+export const ADD_FAVORITE = 'ADD_FAVORITE';
+export const REMOVE_FAVORITE = 'REMOVE_FAVORITE';
 
 //Fetch Favorite
 export const fetchFavorite = () => {
   return async (dispatch, getState) => {
-    const user = getState().auth.user;
-    if (user.userid != undefined) {
-      dispatch({
-        type: FAVORITE_LOADING,
-      });
-      try {
-        const response = await timeoutPromise(
-          fetch(`${API_URL}/favoriteList`, {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "auth-token": user.token,
-            },
-            method: "GET",
-          })
-        );
-        if (!response.ok) {
-          dispatch({
-            type: FAVORITE_FAILURE,
-          });
-          throw new Error("Something went wrong!, can't get favorite list");
-        }
-        const resData = await response.json();
-
-        const filterUserFavorite = resData.content.filter(
-          (userFavorite) => userFavorite.userId === user.userid
-        );
-        let items = [];
-        if (filterUserFavorite.length > 0) {
-          items = filterUserFavorite[0].items;
-        }
+    const jwtToken = getState().auth.token;
+    dispatch({
+      type: FAVORITE_LOADING,
+    });
+    try {
+      const response = await timeoutPromise(
+        fetch(`${API_URL_NHAXINH}/Wishlist/GetAllWishlistsByuserId`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        }),
+      );
+      if (!response.ok) {
         dispatch({
-          type: FETCH_FAVORITE,
-          favoriteList: items,
+          type: FAVORITE_FAILURE,
         });
-      } catch (err) {
-        throw err;
+        throw new Error("Something went wrong!, can't get favorite list");
       }
+      const resData = await response.json();
+      const items = resData || [];
+      dispatch({
+        type: FETCH_FAVORITE,
+        favoriteList: items,
+      });
+    } catch (err) {
+      throw err;
     }
+
     return;
   };
 };
 //Add Favorite
-export const addFavorite = (item) => {
+export const addFavorite = (product )=> {
   return async (dispatch, getState) => {
-    dispatch({
-      type: FAVORITE_LOADING,
-    });
-    const user = getState().auth.user;
+    const jwtToken = getState().auth.token;
+    dispatch({type: FAVORITE_LOADING});
+
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL}/favoriteList/post`, {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "auth-token": user.token,
+        fetch(
+          `${API_URL_NHAXINH}/Wishlist/AddWishlist?prodcutId=${product.productId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
           },
-          method: "POST",
-          body: JSON.stringify({
-            userId: user.userid,
-            items: [
-              {
-                item: item._id,
-              },
-            ],
-          }),
-        })
+        ),
       );
+
+      const resData = await response.json();
       if (!response.ok) {
-        dispatch({
-          type: FAVORITE_FAILURE,
-        });
-        throw new Error("Something went wrong!");
+        dispatch({type: FAVORITE_FAILURE});
+        throw new Error('Không thể thêm vào danh sách yêu thích!');
       }
+
       dispatch({
         type: ADD_FAVORITE,
-        addItem: item,
+        newItem: resData,
       });
     } catch (err) {
-      throw err;
+      dispatch({type: FAVORITE_FAILURE});
+      console.error(err);
     }
   };
 };
-export const removeFavorite = (id) => {
+
+export const removeFavorite = wishlistId => {
   return async (dispatch, getState) => {
-    dispatch({
-      type: FAVORITE_LOADING,
-    });
-    const user = getState().auth.user;
+    const jwtToken = getState().auth.token;
+    dispatch({ type: FAVORITE_LOADING });
+
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL}/favoriteList/${user.userid}`, {
+        fetch(`${API_URL_NHAXINH}/Wishlist/DeleteWishlist/${wishlistId}`, {
           headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "auth-token": user.token,
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
           },
-          method: "PATCH",
-          body: JSON.stringify({
-            item: id,
-          }),
+          method: 'DELETE',
         })
       );
-      if (!response.ok) {
-        dispatch({
-          type: FAVORITE_FAILURE,
-        });
-        throw new Error("Something went wrong!");
+
+      const resData = await response.json();
+      if (!response.ok || !resData.wishlistId) {
+        dispatch({ type: FAVORITE_FAILURE });
+        throw new Error('Something went wrong!');
       }
+
+      // Cập nhật Redux state mà không gọi lại API
+      const favoriteState = getState().fav || {};
+      const updatedList = (favoriteState.favoriteList || []).filter(
+        item => item.wishlistId !== resData.wishlistId
+      );
       dispatch({
         type: REMOVE_FAVORITE,
-        itemId: id,
+        favoriteList: updatedList,
       });
     } catch (err) {
-      throw err;
+      dispatch({ type: FAVORITE_FAILURE });
+      console.error(err);
     }
   };
 };

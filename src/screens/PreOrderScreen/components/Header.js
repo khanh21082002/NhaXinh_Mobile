@@ -40,7 +40,7 @@ export const Header = ({ navigation }) => {
         <View style={styles.orderStepsContainer}>
           <CustomText style={styles.title}> Địa chỉ giao hàng </CustomText>
           <View style={styles.orderSteps}>
-            <OrderSteps position={1} />
+            <OrderSteps position={0} />
           </View>
         </View>
 

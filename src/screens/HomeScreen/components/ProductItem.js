@@ -85,7 +85,7 @@ ProductItem.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    width: 200,
+    width: 180,
     backgroundColor: '#fff',
     borderRadius: 12,
     paddingBottom: 10,

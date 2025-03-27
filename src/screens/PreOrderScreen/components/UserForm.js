@@ -36,7 +36,7 @@ const validate = (values) => {
   return errors;
 };
 
-const User = ({ getReceiver, checkValidation }) => {
+const User = ({ getReceiver, checkValidation , user}) => {
   const [receiverName, setReceiverName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
@@ -108,4 +108,5 @@ const styles = StyleSheet.create({
 export const UserForm = reduxForm({
   form: 'user', // a unique identifier for this form
   validate, // <--- validation function given to redux-form
+  enableReinitialize: true,
 })(User);

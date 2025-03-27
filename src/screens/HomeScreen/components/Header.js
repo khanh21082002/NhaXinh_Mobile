@@ -4,80 +4,21 @@ import {
   Dimensions,
   StyleSheet,
   View,
-  TextInput,
-  FlatList,
-  TouchableOpacity,
+  Text,
   Image,
   Animated,
+  TouchableOpacity,
 } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Colors from "../../../utils/Colors";
 import { AppColors } from "../../../styles";
 
 const { width, height } = Dimensions.get("window");
 
-export const Header = ({ user, products, navigation, style }) => {
+export const Header = ({ user, navigation, style }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [keyword, setKeyword] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
-
+  
   // Animated values
-  const inputBoxTranslateX = new Animated.Value(width);
-  const backButtonOpacity = new Animated.Value(0);
-  const contentTranslateY = new Animated.Value(height);
-  const contentOpacity = new Animated.Value(0);
-  const scrollY = new Animated.Value(0); // Using Animated.Value for scroll position
-
-  useEffect(() => {
-    if (isFocused) {
-      Animated.timing(inputBoxTranslateX, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(backButtonOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(contentTranslateY, {
-        toValue: 0,
-        duration: 0,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(contentOpacity, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(inputBoxTranslateX, {
-        toValue: width,
-        duration: 50,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(backButtonOpacity, {
-        toValue: 0,
-        duration: 50,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(contentTranslateY, {
-        toValue: height,
-        duration: 0,
-        useNativeDriver: true,
-      }).start();
-      Animated.timing(contentOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [isFocused]);
-
-  const _onFocus = () => {
-    setIsFocused(true);
-  };
-
+  const scrollY = new Animated.Value(0);
   const headerPlatform = 50;
 
   const _headerTranslateY = scrollY.interpolate({
@@ -93,45 +34,44 @@ export const Header = ({ user, products, navigation, style }) => {
   });
 
   return (
-    <>
-      <SafeAreaView style={{ ...styles.header_safe_area, ...style }}>
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              transform: [{ translateY: _headerTranslateY }],
-              opacity: _headerOpacity,
-            },
-          ]}
-        >
-          <View style={styles.header_inner}>
-            {/* Profile Image */}
-            {Object.keys(user).length > 0 ? (
-              <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-                <Image
-                  source={
-                    user.avatarUrl && user.avatarUrl.length > 0
-                      ? { uri: user.avatarUrl } 
-                      : require("../../../assets/images/defaultprofile.png") 
-                  }
-                  style={styles.profileImage}
-                />
-              </TouchableOpacity>
-            ) : (
+    <SafeAreaView style={{ ...styles.header_safe_area, ...style }}>
+      <Animated.View
+        style={[
+          styles.header,
+          {
+            transform: [{ translateY: _headerTranslateY }],
+            opacity: _headerOpacity,
+          },
+        ]}
+      >
+        <View style={styles.header_inner}>
+          {/* Profile Section */}
+          {Object.keys(user).length > 0 ? (
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => navigation.navigate("Profile")}
+            >
               <Image
-                source={require("../../../assets/images/defaultprofile.png")}
+                source={
+                  user.avatarUrl && user.avatarUrl.length > 0
+                    ? { uri: user.avatarUrl }
+                    : require("../../../assets/images/defaultprofile.png")
+                }
                 style={styles.profileImage}
               />
-            )}
-
-            {/* Chat Bubble Icon
-            <TouchableOpacity onPress={_onFocus} style={styles.chatIconBox}>
-              <Icon name="message-processing-outline" size={28} color={Colors.black} />
-            </TouchableOpacity> */}
-          </View>
-        </Animated.View>
-      </SafeAreaView>
-    </>
+              <Text style={styles.userName}>
+                {user.firstName + " " + user.lastName}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Image
+              source={require("../../../assets/images/defaultprofile.png")}
+              style={styles.profileImage}
+            />
+          )}
+        </View>
+      </Animated.View>
+    </SafeAreaView>
   );
 };
 
@@ -150,19 +90,23 @@ const styles = StyleSheet.create({
   header_inner: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 15,
+  },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   profileImage: {
     width: 60,
     height: 60,
-    borderRadius: 20,
+    borderRadius: 25,
     resizeMode: "cover",
   },
-  chatIconBox: {
-    justifyContent: "center",
-    alignItems: "center",
+  userName: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: AppColors.primary,
   },
 });
 

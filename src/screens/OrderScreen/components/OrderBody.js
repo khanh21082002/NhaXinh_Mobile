@@ -11,7 +11,7 @@ import { AppColors } from "../../../styles";
 
 export class OrderBody extends React.PureComponent {
   render() {
-    const { navigation, user, orders, loadOrders, isRefreshing } = this.props;
+    const { navigation, user, orders, products, loadOrders, isRefreshing } = this.props;
     return (
       <View style={styles.footer}>
         {Object.keys(user).length === 0 ? (
@@ -38,9 +38,9 @@ export class OrderBody extends React.PureComponent {
             data={orders}
             onRefresh={loadOrders}
             refreshing={isRefreshing}
-            keyExtractor={(item) => item._id}
+            keyExtractor={(item) => item?.orderId?.toString()}
             renderItem={({ item }) => {
-              return <OrderItem order={item} />;
+              return <OrderItem order={item} user={user} productList={products} />;
             }}
           />
         )}

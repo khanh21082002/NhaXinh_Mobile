@@ -29,18 +29,20 @@ export const favoriteReducer = (state = initialState, action) => {
         isLoading: false,
       };
     case ADD_FAVORITE:
-      const newItem = action.addItem;
-      state.favoriteList.push(newItem);
+      // const newItem = action.addItem;
+      // state.favoriteList.push(newItem);
       return {
         ...state,
+        favoriteList: [...state.favoriteList, action.newItem],
         isLoading: false,
       };
     case REMOVE_FAVORITE:
-      const id = action.itemId;
-      const newList = state.favoriteList.filter((item) => item._id !== id);
+      // const id = action.itemId;
+      // const newList = state.favoriteList.filter((item) => item._id !== id);
       return {
         ...state,
-        favoriteList: newList,
+        // favoriteList: newList,
+        favoriteList: action.favoriteList,
         isLoading: false,
       };
     default:

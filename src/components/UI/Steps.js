@@ -63,6 +63,7 @@ const getStepIndicatorIconConfig = ({ position, stepStatus }) => {
 
 const Steps = (props) => {
   const status = props.position;
+  console.log("status", status);
   const [currentPage, setCurrentPage] = React.useState(status);
   const renderStepIndicator = (params) => (
     <MaterialIcons {...getStepIndicatorIconConfig(params)} />

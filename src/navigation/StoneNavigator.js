@@ -350,9 +350,10 @@ export const DrawerNavigator = () => {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawer {...props} />}
-      drawerContentOptions={{
-        activeTintColor: Colors.grey,
-        itemStyle: { marginVertical: 3 },
+      screenOptions={{
+        drawerActiveTintColor: AppColors.primary,
+        drawerInactiveTintColor: Colors.grey,
+        drawerStyle: { marginVertical: 3 },
       }}
     >
       {drawers.map(({ name, icon, label, screen }) => (
@@ -360,13 +361,14 @@ export const DrawerNavigator = () => {
           key={name}
           name={name}
           component={screen}
-          options={() => ({
-            title: ({ focused }) => (
+          options={{
+            title: label, // Dùng chuỗi thay vì function
+            headerTitle: () => ( // Dùng headerTitle để tuỳ chỉnh tiêu đề
               <CustomText
                 style={{
-                  fontSize: 14,
+                  fontSize: 24,
                   fontWeight: '500',
-                  color: focused ? AppColors.primary : Colors.grey,
+                  color: AppColors.primary,
                   fontFamily: 'Roboto-Medium',
                 }}
               >
@@ -380,21 +382,22 @@ export const DrawerNavigator = () => {
                 color={focused ? AppColors.primary : Colors.grey}
               />
             ),
-          })}
+          }}
         />
       ))}
-
+  
       {Object.keys(user).length === 0 ? (
         <Drawer.Screen
           name="SignUp"
           component={AuthStackScreen}
-          options={() => ({
-            title: ({ focused }) => (
+          options={{
+            title: "Đăng nhập",
+            headerTitle: () => (
               <CustomText
                 style={{
-                  fontSize: 14,
+                  fontSize: 24,
                   fontWeight: '500',
-                  color: focused ? AppColors.primary : Colors.grey,
+                  color: AppColors.primary,
                   fontFamily: 'Roboto-Medium',
                 }}
               >
@@ -408,20 +411,21 @@ export const DrawerNavigator = () => {
                 color={focused ? AppColors.primary : Colors.grey}
               />
             ),
-          })}
+          }}
         />
       ) : (
         <>
           <Drawer.Screen
             name="TouchId"
             component={TouchIdScreen}
-            options={() => ({
-              title: ({ focused }) => (
+            options={{
+              title: "Touch/Face ID",
+              headerTitle: () => (
                 <CustomText
                   style={{
-                    fontSize: 14,
+                    fontSize: 24,
                     fontWeight: '500',
-                    color: focused ? AppColors.primary : Colors.grey,
+                    color: AppColors.primary,
                     fontFamily: 'Roboto-Medium',
                   }}
                 >
@@ -435,18 +439,19 @@ export const DrawerNavigator = () => {
                   color={focused ? AppColors.primary : Colors.grey}
                 />
               ),
-            })}
+            }}
           />
           <Drawer.Screen
             name="Profile"
             component={ProfileStackScreen}
-            options={() => ({
-              title: ({ focused }) => (
+            options={{
+              title: "Thông Tin Cá Nhân",
+              headerTitle: () => (
                 <CustomText
                   style={{
-                    fontSize: 14,
+                    fontSize: 24,
                     fontWeight: '500',
-                    color: focused ? AppColors.primary : Colors.grey,
+                    color: AppColors.primary,
                     fontFamily: 'Roboto-Medium',
                   }}
                 >
@@ -460,10 +465,11 @@ export const DrawerNavigator = () => {
                   color={focused ? AppColors.primary : Colors.grey}
                 />
               ),
-            })}
+            }}
           />
         </>
       )}
     </Drawer.Navigator>
   );
+  
 };
