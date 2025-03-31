@@ -11,6 +11,7 @@ import { Host } from 'react-native-portalize';
 import { onMessage, setBackgroundMessageHandler, onNotificationOpenedApp, getInitialNotification } from '../firebaseNotification';
 import { urlRedirect } from '../utils/Tools';
 import ARScreen from '../screens/ARScreen/ARScreen'; // Import ARScreen
+import PaymentMethodScreen from '../screens/BankScreen/PaymentMethodScreen';
 
 const { height, width } = Dimensions.get("window");
 LogBox.ignoreLogs(['Setting a timer']);
@@ -68,41 +69,41 @@ export const AppNavigator = () => {
   }, []);
 
 // Xử lý thông báo
-  // useEffect(() => {
-  //   // Khởi tạo thông báo khi app ở foreground
-  //   const unsubscribeOnMessage = onMessage(async (remoteMessage) => {
-  //     console.log('Thông báo nhận được trong foreground:', remoteMessage);
-  //     // Bạn có thể thực hiện bất kỳ hành động nào khi nhận thông báo ở đây
-  //   });
+  useEffect(() => {
+    // Khởi tạo thông báo khi app ở foreground
+    const unsubscribeOnMessage = onMessage(async (remoteMessage) => {
+      console.log('Thông báo nhận được trong foreground:', remoteMessage);
+      // Bạn có thể thực hiện bất kỳ hành động nào khi nhận thông báo ở đây
+    });
 
-  //   // Khởi tạo thông báo khi app ở background
-  //   const unsubscribeBackgroundMessage = setBackgroundMessageHandler(async (remoteMessage) => {
-  //     console.log('Thông báo nhận được trong background:', remoteMessage);
-  //     // Xử lý khi app ở chế độ background
-  //   });
+    // Khởi tạo thông báo khi app ở background
+    const unsubscribeBackgroundMessage = setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log('Thông báo nhận được trong background:', remoteMessage);
+      // Xử lý khi app ở chế độ background
+    });
 
-  //   // Khi ứng dụng được mở từ notification
-  //   const unsubscribeNotificationOpened = onNotificationOpenedApp((remoteMessage) => {
-  //     console.log('Thông báo được mở từ background:', remoteMessage);
-  //     // Xử lý khi app mở từ notification
-  //   });
+    // Khi ứng dụng được mở từ notification
+    const unsubscribeNotificationOpened = onNotificationOpenedApp((remoteMessage) => {
+      console.log('Thông báo được mở từ background:', remoteMessage);
+      // Xử lý khi app mở từ notification
+    });
 
-  //   // Khi app bị kill và người dùng mở lại qua notification
-  //   const unsubscribeInitialNotification = getInitialNotification().then((remoteMessage) => {
-  //     if (remoteMessage) {
-  //       console.log('Thông báo nhận được khi app bị kill:', remoteMessage);
-  //       // Xử lý khi mở từ notification khi app bị kill
-  //     }
-  //   });
+    // Khi app bị kill và người dùng mở lại qua notification
+    const unsubscribeInitialNotification = getInitialNotification().then((remoteMessage) => {
+      if (remoteMessage) {
+        console.log('Thông báo nhận được khi app bị kill:', remoteMessage);
+        // Xử lý khi mở từ notification khi app bị kill
+      }
+    });
 
-  //   // Clean up khi component unmount
-  //   return () => {
-  //     unsubscribeOnMessage();
-  //     unsubscribeBackgroundMessage();
-  //     unsubscribeNotificationOpened();
-  //     unsubscribeInitialNotification();
-  //   };
-  // }, []);
+    // Clean up khi component unmount
+    return () => {
+      unsubscribeOnMessage();
+      unsubscribeBackgroundMessage();
+      unsubscribeNotificationOpened();
+      unsubscribeInitialNotification();
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -128,6 +129,7 @@ export const AppNavigator = () => {
 
           {/* Màn hình AR sẽ chỉ hiển thị khi được gọi từ navigation */}
           <MainStack.Screen name="AR" component={ARScreen} />
+
         </MainStack.Navigator>
       </Host>
     </NavigationContainer>

@@ -1,55 +1,54 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
-//Colors
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {WebView} from 'react-native-webview'; // Import WebView
+// Các import khác
 import Colors from '../../../utils/Colors';
-//Item
 import ItemList from '../../PreOrderScreen/components/PreOrderItem';
-//Number format
 import NumberFormat from '../../../components/UI/NumberFormat';
-//Moment
 import moment from 'moment';
-import 'moment/min/locales';
-//PropTypes check
 import PropTypes from 'prop-types';
 import CustomText from '../../../components/UI/CustomText';
 import Steps from '../../../components/UI/Steps';
 import {AppColors} from '../../../styles';
+import {navigate} from '../../../navigation/RootNavigation';
 
 moment.locale('vi');
 
-export const OrderItem = ({order, user , productList}) => {
+export const OrderItem = ({order, user, productList}) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [showWebView, setShowWebView] = useState(false); // Thêm state để kiểm tra WebView
   const status = () => {
     switch (order.status) {
       case 'pending':
         return 0;
       case 'confirmed':
         return 1;
-      case 'shipped':
+      case 'processing':
         return 2;
-      case 'delivery':
+      case 'shipped':
         return 3;
+      case 'delivery':
+        return 4;
       default:
         return -1;
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.summary}>
         <View style={styles.textContainer}>
           <CustomText style={styles.text}>Mã đơn: </CustomText>
-          <CustomText style={styles.detail}>
-            {/* CT-{order.orderId.substr(order.orderId.length - 10)} */}
-            {order.orderId}
-          </CustomText>
+          <CustomText style={styles.detail}>{order.orderId}</CustomText>
         </View>
 
         <View style={styles.textContainer}>
           <CustomText style={styles.text}>Ngày đặt: </CustomText>
           <CustomText style={styles.detail}>
-            {moment(order.createdAt).format('Do MMMM  YYYY, hh:mm a ')}
+            {moment(order.createdAt).format('Do MMMM YYYY, hh:mm a')}
           </CustomText>
         </View>
+
         <View style={styles.detailButtom}>
           <TouchableOpacity onPress={() => setShowDetails(prev => !prev)}>
             <CustomText style={{fontSize: 15, color: '#fff'}}>
@@ -57,6 +56,7 @@ export const OrderItem = ({order, user , productList}) => {
             </CustomText>
           </TouchableOpacity>
         </View>
+
         {showDetails ? (
           <View>
             <View style={styles.textContainer}>
@@ -72,33 +72,61 @@ export const OrderItem = ({order, user , productList}) => {
                 {order.shippingAddress}
               </CustomText>
             </View>
+
             <View style={styles.textContainer}>
               <CustomText style={styles.text}>Số điện thoại: </CustomText>
               <CustomText style={styles.detail}>{user.phone}</CustomText>
             </View>
+
             <View style={styles.textContainer}>
               <CustomText style={styles.text}>
-                Phương thức thanh toán:{" "}
+                Phương thức thanh toán:{' '}
               </CustomText>
               <CustomText style={styles.detail}>
-                {order.paymentMethod === 'Cash' ? 'Thanh toán bằng tiền mặt' : 'Thanh toán trực tuyến'}
+                {order.paymentMethod === 'Cash'
+                  ? 'Thanh toán bằng tiền mặt'
+                  : order.paymentMethod === 'Banking'
+                  ? 'Thanh toán qua ngân hàng'
+                  : 'Thanh toán trực tuyến'}
               </CustomText>
             </View>
+
+            {/* Nếu phương thức thanh toán là 'Banking' thì hiển thị nút WebView */}
+            {order.paymentMethod === 'banking' && order.status === 'confirmed' && !showWebView && (
+              <View
+                style={[
+                  styles.detailButtom,
+                  {marginTop: 10, backgroundColor: AppColors.primaryButton},
+                ]}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigate('PaymentMethod', {orderId: order.orderId})
+                  }>
+                  <CustomText style={{fontSize: 15, color: '#fff'}}>
+                    Thanh toán qua ngân hàng
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+            )}
+
             <View style={styles.steps}>
               <Steps position={status()} />
             </View>
 
-            <CustomText style={{fontSize: 15, marginTop: 10}}>Sản phẩm đã đặt:</CustomText>
+            <CustomText style={{fontSize: 15, marginTop: 10}}>
+              Sản phẩm đã đặt:
+            </CustomText>
             {order.orderInfo.map(item => {
-                        const product = productList.find(
-                          p => p.productId === item.productId,
-                        );
-                        return product ? (
-                          <View key={item.productId}>
-                            <ItemList item={product} quantity={item.quantity} />
-                          </View>
-                        ) : null;
-                      })}
+              const product = productList.find(
+                p => p.productId === item.productId,
+              );
+              return product ? (
+                <View key={item.productId}>
+                  <ItemList item={product} quantity={item.quantity} />
+                </View>
+              ) : null;
+            })}
+
             <View
               style={{
                 ...styles.textContainer,
@@ -112,9 +140,7 @@ export const OrderItem = ({order, user , productList}) => {
               />
             </View>
           </View>
-        ) : (
-          <View />
-        )}
+        ) : null}
       </View>
     </View>
   );

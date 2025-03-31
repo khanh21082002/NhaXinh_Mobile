@@ -19,7 +19,7 @@ export const PaymentScreen = (props) => {
   const orderLoading = useSelector((state) => state.order.isLoading);
   let token = props.route.params.token;
   const [payByCard, setPayByCard] = useState(false);
-  const paymentMethod = payByCard ? 'banking' : 'Cash';
+  const paymentMethod = payByCard ? 'banking' : 'cash';
   const unmounted = useRef(false);
   useEffect(() => {
     return () => {

@@ -15,6 +15,13 @@ import {
   Dimensions,
   Text,
 } from 'react-native';
+
+//Authentication google
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import { WEB_CLIENT_ID } from '../../../utils/Config';
+
+
+
 //Colors
 import Colors from '../../../utils/Colors';
 import { AppColors } from '../../../styles';
@@ -22,15 +29,15 @@ import CustomText from '../../../components/UI/CustomText';
 //Redux
 import { useDispatch, useSelector } from 'react-redux';
 //Action
-import { Login as LoginAction } from '../../../reducers';
+import { AuthenticationGoogle, Login as LoginAction } from '../../../reducers';
 //PropTypes check
 import PropTypes from 'prop-types';
 import renderField from './RenderField';
 //Authentiation Touch ID Face ID
-
 import TouchID from 'react-native-touch-id';
 import * as Keychain from 'react-native-keychain';
 import { secretKey } from '../../../utils/Config';
+import { signIn } from '../../../utils/signInGoogle';
 
 const { height } = Dimensions.get('window');
 
@@ -110,6 +117,36 @@ const Login = (props) => {
       ]);
     }
   };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: WEB_CLIENT_ID,
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+    });
+  }, []);
+
+  async function onGoogleButtonPress() {
+    try {
+      // Kiểm tra xem thiết bị có hỗ trợ Google Play không
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  
+      // Đăng nhập và lấy ID Token từ Google
+      const signInResult = await GoogleSignin.signIn();
+      let idToken = signInResult.idToken || signInResult.data?.idToken;
+  
+      if (!idToken) {
+        throw new Error('Không tìm thấy ID Token');
+      }
+  
+      // Gọi API xác thực Google
+      await dispatch(AuthenticationGoogle(idToken));
+  
+      props.navigation.replace('HomeTab');
+    } catch (error) {
+      Alert.alert('Lỗi đăng nhập' || 'Đã có lỗi xảy ra khi đăng nhập');
+    }
+  }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'position' : 'height'}>
@@ -235,7 +272,8 @@ const Login = (props) => {
                 style={styles.img}
               />
             </TouchableOpacity>
-            <TouchableOpacity
+            <TouchableOpacity 
+              onPress={onGoogleButtonPress}
             >
               <Image
                 source={require('../../../assets/images/google.png')}

@@ -40,7 +40,7 @@ export class OrderBody extends React.PureComponent {
             refreshing={isRefreshing}
             keyExtractor={(item) => item?.orderId?.toString()}
             renderItem={({ item }) => {
-              return <OrderItem order={item} user={user} productList={products} />;
+              return <OrderItem order={item} user={user} productList={products} navigation={navigation} />;
             }}
           />
         )}

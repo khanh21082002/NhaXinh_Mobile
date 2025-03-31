@@ -65,6 +65,7 @@ import BankAccountScreen from '../screens/BankScreen/BankAccountScreen';
 import BankCardScreen from '../screens/BankScreen/BankCardScreen';
 import { PrivacyPolicyScreen } from '../screens/PrivacyPolicyScreen';
 import PaymentPolicyScreen from '../screens/PaymentPolicyScreen/PaymentPolicyScreen';
+import HistoryOrderScreen from '../screens/HIstoryOrderScreen/HistoryOrderScreen';
 
 
 
@@ -182,8 +183,8 @@ export const ProfileStackScreen = () => (
     <ProfileStack.Screen name="Profile" component={ProfileScreen} />
     <ProfileStack.Screen name="ProfileEdit" component={EditProfileScreen} />
     <ProfileStack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
+    <ProfileStack.Screen name="HistoryOrder" component={HistoryOrderScreen} />
 
-    <ProfileStack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
     <ProfileStack.Screen name="BankList" component={BankListScreen} />
     <ProfileStack.Screen name="BankAccount" component={BankAccountScreen} />
 
@@ -250,6 +251,21 @@ export const HomeStackScreen = () => (
     <HomeStack.Screen name="ResetPw" component={ResetPwScreen} />
   </HomeStack.Navigator>
 );
+
+//Order
+const OrderStack = createStackNavigator();
+export const OrderStackScreen = () => (
+  <OrderStack.Navigator
+    screenOptions={{
+      headerShown: false,
+      cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+    }}
+  >
+    <OrderStack.Screen name="OrderScreen" component={OrderScreen} />
+    <OrderStack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
+  </OrderStack.Navigator>
+);
+
 
 //Tab
 const Tab = createMaterialBottomTabNavigator();
@@ -329,7 +345,7 @@ export const DrawerNavigator = () => {
     },
     {
       name: 'Order',
-      screen: OrderScreen,
+      screen: OrderStackScreen,
       label: 'Đơn Hàng',
       icon: 'receipt',
     },

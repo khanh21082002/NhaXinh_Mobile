@@ -47,10 +47,14 @@ const getStepIndicatorIconConfig = ({ position, stepStatus }) => {
       break;
     }
     case 2: {
-      iconConfig.name = 'location-on';
+      iconConfig.name = 'settings';
       break;
     }
     case 3: {
+      iconConfig.name = 'location-on';
+      break;
+    }
+    case 4: {
       iconConfig.name = 'payment';
       break;
     }
@@ -74,10 +78,10 @@ const Steps = (props) => {
       <View style={styles.stepIndicator}>
         <StepIndicator
           customStyles={secondIndicatorStyles}
-          stepCount={4}
+          stepCount={5}
           currentPosition={currentPage}
           renderStepIndicator={renderStepIndicator}
-          labels={['Chưa xác nhận', 'Xác nhận', 'Đang giao', 'Nhận hàng']}
+          labels={['Chưa xác nhận', 'Xác nhận', 'Đang xử lý','Đang giao', 'Nhận hàng']}
         />
       </View>
     </View>

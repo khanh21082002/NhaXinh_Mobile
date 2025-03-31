@@ -38,8 +38,11 @@ export const PaymentBody = ({ navigation, payByCard, setPayByCard, token }) => {
           <Checkbox
             status={payByCard ? "checked" : "unchecked"}
             color={AppColors.primary}
-            onPress={() => navigation.navigate("AddCreditCardScreen")}
+            // onPress={() => navigation.navigate("AddCreditCardScreen")}
             // containerStyle={{ padding: 5 }}
+            onPress={() => {
+              setPayByCard(true);
+            }}
           />
           <MaterialCommunityIcons
             name='credit-card-outline'
@@ -55,14 +58,14 @@ export const PaymentBody = ({ navigation, payByCard, setPayByCard, token }) => {
               style={styles.cardImage}
               source={require("../../../assets/images/creditcards.png")}
             />
-            {payByCard && token ? (
+            {/* {payByCard && token ? (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Entypo name='dots-two-horizontal' size={24} color='black' />
                 <CustomText>{token.card.last4}</CustomText>
               </View>
             ) : (
               <></>
-            )}
+            )} */}
           </View>
         </View>
       </View>

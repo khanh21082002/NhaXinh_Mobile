@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { jwtDecode } from "jwt-decode";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {jwtDecode} from 'jwt-decode';
 // import { API_URL } from '../../utils/Config';
-import { API_URL_NHAXINH } from '../../utils/Config';
-import { timeoutPromise } from '../../utils/Tools';
+import {API_URL_NHAXINH} from '../../utils/Config';
+import {timeoutPromise} from '../../utils/Tools';
 
 export const AUTH_LOADING = 'AUTH_LOADING';
 export const SIGN_UP = 'SIGN_UP';
@@ -18,7 +19,6 @@ export const RESET_ERROR = 'RESET_ERROR';
 export const RESET_SUCCESS = 'RESET_SUCCESS';
 export const GET_PROFILE_SUCCESS = 'GET_PROFILE_SUCCESS';
 
-
 import AskingExpoToken from '../../components/Notification/AskingNotiPermission';
 
 //Create dataStorage
@@ -31,8 +31,8 @@ const saveDataToStorage = (name, data) => {
   );
 };
 
-export const SignUp = (firstname,lastname, email, password ,rePassword) => {
-  return async (dispatch) => {
+export const SignUp = (firstname, lastname, email, password, rePassword) => {
+  return async dispatch => {
     dispatch({
       type: AUTH_LOADING,
     });
@@ -45,11 +45,11 @@ export const SignUp = (firstname,lastname, email, password ,rePassword) => {
           },
           method: 'POST',
           body: JSON.stringify({
-            firstName:firstname,
-            lastName:lastname,
+            firstName: firstname,
+            lastName: lastname,
             email,
             password,
-            rePassword
+            rePassword,
           }),
         }),
       );
@@ -60,8 +60,8 @@ export const SignUp = (firstname,lastname, email, password ,rePassword) => {
         });
         throw new Error(errorResData);
       }
-      const resData = await response.json();    
-        dispatch({ type: SIGN_UP });
+      const resData = await response.json();
+      dispatch({type: SIGN_UP});
     } catch (err) {
       throw err;
     }
@@ -69,8 +69,8 @@ export const SignUp = (firstname,lastname, email, password ,rePassword) => {
 };
 
 //SentOTP
-export const SentOTP = (email , Otp) => {
-  return async (dispatch) => {
+export const SentOTP = (email, Otp) => {
+  return async dispatch => {
     dispatch({
       type: AUTH_LOADING,
     });
@@ -106,7 +106,7 @@ export const SentOTP = (email , Otp) => {
 
 //Login
 export const Login = (email, password) => {
-  return async (dispatch) => {
+  return async dispatch => {
     dispatch({
       type: AUTH_LOADING,
     });
@@ -123,7 +123,7 @@ export const Login = (email, password) => {
           body: JSON.stringify({
             email,
             password,
-            fcmToken:pushToken,
+            fcmToken: pushToken,
           }),
         }),
       );
@@ -139,28 +139,30 @@ export const Login = (email, password) => {
       let decodedToken;
       try {
         decodedToken = jwtDecode(resData);
-        
       } catch (decodeError) {
-        
         throw new Error('Lỗi token không hợp lệ');
       }
       //Get User
       const jwtToken = resData;
-      const userResponse = await fetch(`${API_URL_NHAXINH}/Profile/GetCurrentUserProfile`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const userResponse = await fetch(
+        `${API_URL_NHAXINH}/Profile/GetCurrentUserProfile`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
         },
-        method: 'GET',
-      });
+      );
       if (!userResponse.ok) {
         const errorText = await userResponse.text();
-        throw new Error(`Không thể lấy thông tin người dùng! Lỗi: ${errorText}`);
+        throw new Error(
+          `Không thể lấy thông tin người dùng! Lỗi: ${errorText}`,
+        );
       }
 
       const userData = await userResponse.json();
-      
 
       saveDataToStorage('users', userData);
       dispatch(setLogoutTimer(60 * 60 * 1000));
@@ -195,11 +197,10 @@ export const EditInfo = (firstName, lastName, phone, address) => {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
             Accept: 'application/json',
-
           },
           method: 'POST',
           body: formData,
-        })
+        }),
       );
       if (!response.ok) {
         const errorResData = await response.json();
@@ -223,7 +224,6 @@ export const EditInfo = (firstName, lastName, phone, address) => {
   };
 };
 
-
 //UploadProfilePic
 export const UploadProfilePic = (imageUri, filename, type) => {
   return async (dispatch, getState) => {
@@ -240,7 +240,6 @@ export const UploadProfilePic = (imageUri, filename, type) => {
       type: type,
     });
     try {
-     
       const response = await timeoutPromise(
         fetch(`${API_URL_NHAXINH}/Profile/UpdateProfileImage`, {
           headers: {
@@ -252,10 +251,9 @@ export const UploadProfilePic = (imageUri, filename, type) => {
         }),
       );
 
-      
       if (!response.ok) {
         const errorResData = await response.json();
-        console.error("Error:", errorResData);
+        console.error('Error:', errorResData);
         dispatch({
           type: AUTH_FAILURE,
         });
@@ -264,7 +262,7 @@ export const UploadProfilePic = (imageUri, filename, type) => {
 
       dispatch({
         type: UPLOAD_PROFILEPIC,
-        avatarUrl: imageUri
+        avatarUrl: imageUri,
       });
     } catch (err) {
       throw err;
@@ -273,8 +271,8 @@ export const UploadProfilePic = (imageUri, filename, type) => {
 };
 
 //ForgetPassword
-export const ForgetPassword = (Email) => {
-  return async (dispatch) => {
+export const ForgetPassword = Email => {
+  return async dispatch => {
     dispatch({
       type: AUTH_LOADING,
     });
@@ -286,8 +284,7 @@ export const ForgetPassword = (Email) => {
             'Content-Type': 'application/json',
           },
           method: 'POST',
-          body: JSON.stringify({
-          }),
+          body: JSON.stringify({}),
         }),
       );
       if (!response.ok) {
@@ -308,22 +305,24 @@ export const ForgetPassword = (Email) => {
 
 //ChangePassword
 export const ChangePassword = (oldpassword, newpassword) => {
-  return async (dispatch , getState) => {
+  return async (dispatch, getState) => {
     dispatch({
       type: AUTH_LOADING,
     });
     const jwtToken = getState().auth.token;
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL_NHAXINH}/Profile/UpdateProfilePassword?oldPass=${oldpassword}&newPass=${newpassword}`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            Accept: 'application/json',
+        fetch(
+          `${API_URL_NHAXINH}/Profile/UpdateProfilePassword?oldPass=${oldpassword}&newPass=${newpassword}`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+              Accept: 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({}),
           },
-          method: 'POST',
-          body: JSON.stringify({
-          }),
-        }),
+        ),
       );
       const responseJson = await response.json();
       if (!response.ok) {
@@ -341,15 +340,91 @@ export const ChangePassword = (oldpassword, newpassword) => {
   };
 };
 
+//Authentication Google
+export const AuthenticationGoogle = (tokenId) => {
+  return async dispatch => {
+    dispatch({
+      type: AUTH_LOADING,
+    });
+    const pushToken = await AskingExpoToken();
+    try {
+      const response = await timeoutPromise(
+        fetch(`${API_URL_NHAXINH}/Login/LoginGoogle?id_token=${tokenId}&fcmToken=${pushToken}`, {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          body: JSON.stringify({}),
+        }),
+      );
+      if (!response.ok) {
+        dispatch({
+          type: AUTH_FAILURE,
+        });
+        throw new Error(response.json());
+      }
+      const resData = await response.json();
+      let decodedToken;
+      try {
+        decodedToken = jwtDecode(resData);
+      } catch (decodeError) {
+        throw new Error('Lỗi token không hợp lệ');
+      }
+      //Get User
+      const jwtToken = resData;
+      const userResponse = await fetch(
+        `${API_URL_NHAXINH}/Profile/GetCurrentUserProfile`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        },
+      );
+      if (!userResponse.ok) {
+        const errorText = await userResponse.text();
+        throw new Error(
+          `Không thể lấy thông tin người dùng! Lỗi: ${errorText}`,
+        );
+      }
+
+      const userData = await userResponse.json();
+
+      saveDataToStorage('users', userData);
+      dispatch(setLogoutTimer(60 * 60 * 1000));
+      dispatch({
+        type: LOGIN,
+        user: userData,
+        token: jwtToken,
+      });
+    } catch (err) {
+      throw err;
+    }
+  };
+};
+
 //Logout
 export const Logout = () => {
-  return (dispatch) => {
-    clearLogoutTimer(); //clear setTimeout when logout
-    AsyncStorage.removeItem('user');
-    dispatch({
-      type: LOGOUT,
-      user: {},
-    });
+  return async dispatch => {
+    try {
+      // Gọi Google Sign-Out và xóa quyền truy cập
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut();
+
+      // Xóa dữ liệu người dùng khỏi AsyncStorage
+      await AsyncStorage.removeItem('user');
+
+      // Dispatch action LOGOUT để cập nhật Redux state
+      dispatch({
+        type: LOGOUT,
+        user: {},
+      });
+    } catch (error) {
+      console.error('Lỗi khi đăng xuất:', error);
+    }
   };
 };
 
@@ -360,8 +435,8 @@ const clearLogoutTimer = () => {
     clearTimeout(timer);
   }
 };
-const setLogoutTimer = (expirationTime) => {
-  return (dispatch) => {
+const setLogoutTimer = expirationTime => {
+  return dispatch => {
     timer = setTimeout(async () => {
       await dispatch(Logout());
       alert('Logout section expired');

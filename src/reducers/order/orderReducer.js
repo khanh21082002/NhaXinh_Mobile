@@ -1,12 +1,14 @@
 import {
   ADD_ORDER,
   FETCH_ORDER,
+  FETCH_ORDERHISTORY,
   ORDER_LOADING,
   ORDER_FAILURE,
 } from "./orderActions";
 
 const initialState = {
   orders: [],
+  orderHistory: [],
   isLoading: false,
 };
 
@@ -26,6 +28,12 @@ export const orderReducer = (state = initialState, action) => {
       return {
         ...state,
         orders: action.orders,
+        isLoading: false,
+      };
+    case FETCH_ORDERHISTORY:
+      return {
+        ...state,
+        orderHistory: action.orderHistory,
         isLoading: false,
       };
     case ADD_ORDER:

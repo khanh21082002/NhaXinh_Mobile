@@ -6,5 +6,7 @@ export const STRIPE_PUBLISHABLE_KEY =
 
 export const API_URL_VN = "https://provinces.open-api.vn/api"
 export const GEMINI_API_KEY ="AIzaSyBy4NDQDWE10oFYBeafsoWS9BEoqwv6nrs";
-export const API_URL_NHAXINH = "http://192.168.1.18:5217/api";
+export const API_URL_NHAXINH = "http://192.168.1.14:5217/api";
 export const API_URL_BANK = "https://api.vietqr.io/v2/banks";
+
+export const WEB_CLIENT_ID = "167612952725-d9hstirj1r4qfuce5s8dkesfg9fd4cn3.apps.googleusercontent.com";

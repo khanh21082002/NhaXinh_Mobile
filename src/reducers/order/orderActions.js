@@ -4,6 +4,7 @@ import {timeoutPromise} from '../../utils/Tools';
 export const ORDER_LOADING = 'ORDER_LOADING';
 export const ORDER_FAILURE = 'ORDER_FAILURE';
 export const FETCH_ORDER = 'FETCH_ORDER';
+export const FETCH_ORDERHISTORY = 'FETCH_ORDERHISTORY';
 export const ADD_ORDER = 'ADD_ORDER';
 export const ERROR = 'ERROR';
 
@@ -136,3 +137,39 @@ export const CreateOrderFromCart = (
     }
   };
 };
+
+export const fetchOrderHistory = () => {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: ORDER_LOADING,
+    });
+    const jwtToken = getState().auth.token;
+    try {
+      const response = await timeoutPromise(
+        fetch(`${API_URL_NHAXINH}/Order/GetUserOrderHistorys`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        }),
+      );
+      if (!response.ok) {
+        dispatch({
+          type: ORDER_FAILURE,
+        });
+        throw new Error("Something went wrong! Can't get your order");
+      }
+      const resData = await response.json();
+      const orderHistory = resData || [];
+      dispatch({
+        type: FETCH_ORDERHISTORY,
+        orderHistory,
+      });
+    } catch (err) {
+      throw err;
+    }
+  };
+};
+
