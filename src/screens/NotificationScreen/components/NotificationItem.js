@@ -7,27 +7,19 @@ import {
 } from "react-native";
 
 const NotificationItem = ({ item, onPress }) => {
-  const { 
-    title, 
-    description, 
-    time, 
-    isUnread = false, 
-    icon, 
-    isToday = false 
-  } = item;
   
   return (
     <TouchableOpacity onPress={onPress} style={styles.item}>
-      {isUnread && <View style={styles.unreadDot} />}
+      {item.isRead && <View style={styles.unreadDot} />}
       <View style={styles.iconContainer}>
-        {icon}
+        {/* {icon} */}
       </View>
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={2}>{title}</Text>
-        {description && (
-          <Text style={styles.description} numberOfLines={2}>{description}</Text>
+        <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
+        {item.message && (
+          <Text style={styles.description} numberOfLines={2}>{item.message}</Text>
         )}
-        <Text style={styles.time}>{time}</Text>
+        <Text style={styles.time}>{item.createdDate}</Text>
       </View>
     </TouchableOpacity>
   );

@@ -6,4 +6,5 @@ export * from "./product";
 export * from "./bank";
 export * from "./category";
 export * from "./payment"
+export * from "./notification";
 

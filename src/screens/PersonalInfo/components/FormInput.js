@@ -27,6 +27,7 @@ export const FormInput = ({
   isGender,
   isCity,
   onChangeValue,
+  keyboardType,
 }) => {
   const dispatch = useDispatch();
 
@@ -83,6 +84,7 @@ export const FormInput = ({
           , colors: { primary: AppColors.yellowLight }
         }}
         style={styles.input}
+        keyboardType={keyboardType}
       />
 
       {/* Date Picker */}

@@ -11,14 +11,14 @@ import {
 import CustomText from "../../../components/UI/CustomText";
 import { AppColors } from "../../../styles";
 
-const FilterModal = ({ visible, toggleModal, onApply, onClear }) => {
-  const [priceFilter, setPriceFilter] = useState("Mới nhất");
-  const [materialFilter, setMaterialFilter] = useState("Tất cả");
+const FilterModal = ({ visible, toggleModal, onApply, onClear, currentFilters }) => {
+  const [priceFilter, setPriceFilter] = useState(currentFilters?.price || "Tất cả");
+  const [materialFilter, setMaterialFilter] = useState(currentFilters?.material || "Tất cả");
   const [priceDropdownVisible, setPriceDropdownVisible] = useState(false);
   const [materialDropdownVisible, setMaterialDropdownVisible] = useState(false);
 
   const priceOptions = [
-    "Mới nhất",
+    "Tất cả",
     "Theo giá: Thấp đến cao",
     "Theo giá: Cao đến thấp",
   ];
@@ -33,6 +33,19 @@ const FilterModal = ({ visible, toggleModal, onApply, onClear }) => {
   const handleMaterialChange = (value) => {
     setMaterialFilter(value);
     setMaterialDropdownVisible(false);
+  };
+
+  const handleApplyFilters = () => {
+    onApply({
+      price: priceFilter,
+      material: materialFilter
+    });
+  };
+
+  const handleClearFilters = () => {
+    setPriceFilter("Tất cả");
+    setMaterialFilter("Tất cả");
+    onClear();
   };
 
   return (
@@ -102,10 +115,10 @@ const FilterModal = ({ visible, toggleModal, onApply, onClear }) => {
 
               {/* Action Buttons */}
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.applyButton} onPress={onApply}>
+                <TouchableOpacity style={styles.applyButton} onPress={handleApplyFilters}>
                   <CustomText style={styles.buttonText}>Áp dụng</CustomText>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.clearButton} onPress={onClear}>
+                <TouchableOpacity style={styles.clearButton} onPress={handleClearFilters}>
                   <CustomText style={styles.buttonText}>Xóa bộ lọc</CustomText>
                 </TouchableOpacity>
               </View>

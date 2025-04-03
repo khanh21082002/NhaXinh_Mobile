@@ -111,7 +111,6 @@ export const Login = (email, password) => {
       type: AUTH_LOADING,
     });
     const pushToken = await AskingExpoToken();
-    console.log(pushToken);
     try {
       const response = await timeoutPromise(
         fetch(`${API_URL_NHAXINH}/Login/Login`, {

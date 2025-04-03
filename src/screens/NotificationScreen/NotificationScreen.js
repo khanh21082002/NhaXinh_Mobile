@@ -13,20 +13,21 @@ import { MessageIcon, ShippingIcon } from './components/Icons';
 //Loader
 import SkeletonLoadingCart from "../../components/Loaders/SkeletonLoadingCart";
 import NotificationBody from './components/NotificationBody';
+import { fetchNotification } from '../../reducers';
 
 const { height } = Dimensions.get('window');
 
 export const NotificationScreen = ({ navigation }) => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const user = useSelector((state) => state.auth.user);
-    const loading = useSelector((state) => state.fav.isLoading);
-    const NotificationSection = useSelector((state) => state.fav.favoriteList);
+    const loading = useSelector((state) => state.notification.isLoading);
+    const notifications = useSelector((state) => state.notification.notifications);
     const dispatch = useDispatch();
 
     const loadNotification = useCallback(async () => {
         setIsRefreshing(true);
         try {
-            await dispatch(fetchFavorite());
+            await dispatch(fetchNotification());
         } catch (err) {
             alert(err.message);
         }
@@ -34,7 +35,9 @@ export const NotificationScreen = ({ navigation }) => {
     }, [dispatch, setIsRefreshing]);
     useEffect(() => {
         loadNotification();
-    }, [user.userid]);
+    }, []);
+
+    console.log(notifications);
 
     return (
         <View style={styles.container}>
@@ -44,7 +47,7 @@ export const NotificationScreen = ({ navigation }) => {
             ) : (
                 <NotificationBody
                     user={user}
-                    notificationSection={NotificationSection}
+                    notificationSection={notifications}
                     navigation={navigation}
                     loadNotification={loadNotification}
                     isRefreshing={isRefreshing}

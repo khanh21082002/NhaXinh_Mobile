@@ -73,7 +73,7 @@ export const PersonalInfoBody = ({ user }) => {
                         </View>
                     </View>
 
-                    <FormInput label="Số điện thoại" value={formData.phone} editable={isEditing} onChangeValue={(text) => handleChange("phone", text)} />
+                    <FormInput label="Số điện thoại" value={formData.phone} editable={isEditing} onChangeValue={(number) => handleChange("phone", number)} keyboardType="numeric"/>
                     <FormInput label="Tỉnh/Thành phố" value={formData.address} iconName="arrow-drop-down" isCity editable={isEditing} onChangeValue={(text) => handleChange("address", text)} />
                 </View>
                 {isEditing && (

@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
-  TextInput, // Import TextInput for the search bar
-  FlatList, // Use FlatList instead of SectionList
+  TextInput,
+  FlatList,
 } from 'react-native';
 
 // Color
@@ -25,20 +25,28 @@ export const ProductBody = ({
   setMessage,
   setShowSnackbar,
 }) => {
-  const [searchQuery, setSearchQuery] = useState(''); // State for search input
+  const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null); // To track the selected item for the modal
+  const [selectedItem, setSelectedItem] = useState(null);
   const [color, setColor] = useState(AppColors.primary);
+  // Current active filters
+  const [activeFilters, setActiveFilters] = useState({
+    price: "Tất cả",
+    material: "Tất cả"
+  });
   // Flatten productsFilter for FlatList usage
   const DATA = productsFilter || [];
 
   useEffect(() => {
     const checkColor = async () => {
-      const getColor = await colorCheck(item.color);
-      setColor(getColor);
+      if (selectedItem && selectedItem.color) {
+        const getColor = await colorCheck(selectedItem.color);
+        setColor(getColor);
+      }
     };
     checkColor();
-  }, [productsFilter]);
+  }, [selectedItem]);
+
   // Handle opening the modal
   const handleOpenModal = item => {
     setSelectedItem(item); // Set the selected item
@@ -51,18 +59,68 @@ export const ProductBody = ({
     setSelectedItem(null); // Reset selected item
   };
 
+  // Apply both text search and filters
+  const applyFilters = (filterValues) => {
+    setActiveFilters(filterValues);
+    
+    // First apply text search
+    let filteredProducts = searchQuery 
+      ? productsFilter.filter(product => 
+          product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : productsFilter;
+    
+    // Then apply material filter if not "All"
+    if (filterValues.material !== "Tất cả") {
+      filteredProducts = filteredProducts.filter(product => 
+        product.material === filterValues.material
+      );
+    }
+    
+    // Apply price sorting
+    if (filterValues.price === "Theo giá: Thấp đến cao") {
+      filteredProducts = [...filteredProducts].sort((a, b) => a.price - b.price);
+    } else if (filterValues.price === "Theo giá: Cao đến thấp") {
+      filteredProducts = [...filteredProducts].sort((a, b) => b.price - a.price);
+    }
+    
+    // Update products through the parent function
+    searchFilterFunction(searchQuery, filteredProducts);
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setActiveFilters({
+      price: "Tất cả",
+      material: "Tất cả"
+    });
+    
+    // Reset to just the text search
+    searchFilterFunction(searchQuery);
+  };
+
+  // Handle search text changes
+  const handleSearchChange = (text) => {
+    setSearchQuery(text);
+    
+    // Apply search with current filters
+    searchFilterFunction(text, null, activeFilters);
+  };
+
   return (
     <View style={styles.container}>
-      <Header navigation={navigation} />
+      <Header 
+        navigation={navigation} 
+        applyFilters={applyFilters}
+        clearFilters={clearFilters}
+        currentFilters={activeFilters}
+      />
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
           placeholder="Tìm kiếm sản phẩm"
           value={searchQuery}
-          onChangeText={text => {
-            setSearchQuery(text);
-            searchFilterFunction(text);
-          }}
+          onChangeText={handleSearchChange}
         />
       </View>
 

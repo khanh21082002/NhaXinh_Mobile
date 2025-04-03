@@ -116,7 +116,7 @@ const OrderDetails = ({orderId}) => {
             <View style={styles.paymentRow}>
               <Text style={styles.paymentLabel}>Thanh toán</Text>
               <Text style={styles.paymentValue}>
-                {order.paymentMethod === 'Cash'
+                {order.paymentMethod === 'cash'
                   ? 'Chưa thanh toán'
                   : 'Đã thanh toán'}
               </Text>

@@ -1,4 +1,4 @@
-import React, {useState ,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 //redux
 import {useSelector} from 'react-redux';
@@ -10,15 +10,42 @@ import {ProductBody} from './components';
 export const ProductScreen = props => {
   const products = useSelector(state => state.store.products);
   const user = useSelector(state => state.auth.user);
-  const [productsFilter, setproductsFilter] = useState(products);
+  const [productsFilter, setProductsFilter] = useState(products);
   const [message, setMessage] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const searchFilterFunction = text => {
-    const data = products.filter(product =>
-      product.name.toLowerCase().includes(text.toLowerCase()),
-    );
-    setproductsFilter(data);
+  
+  // Enhanced search filter function that can handle both text search and filter criteria
+  const searchFilterFunction = (text, preFilteredData = null, filters = null) => {
+    // Start with all products or pre-filtered data if provided
+    let data = preFilteredData || products;
+    
+    // Apply text search if provided
+    if (text) {
+      data = data.filter(product =>
+        product.name.toLowerCase().includes(text.toLowerCase()),
+      );
+    }
+    
+    // Apply filters if provided
+    if (filters) {
+      // Apply material filter
+      if (filters.material !== "Tất cả") {
+        data = data.filter(product => 
+          product.material === filters.material
+        );
+      }
+      
+      // Apply price sorting
+      if (filters.price === "Theo giá: Thấp đến cao") {
+        data = [...data].sort((a, b) => a.price - b.price);
+      } else if (filters.price === "Theo giá: Cao đến thấp") {
+        data = [...data].sort((a, b) => b.price - a.price);
+      }
+    }
+    
+    setProductsFilter(data);
   };
+
   return (
     <View style={styles.container}>
       {showSnackbar && <Snackbar checkVisible={showSnackbar} message={message} />}
@@ -40,3 +67,5 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
 });
+
+export default ProductScreen;

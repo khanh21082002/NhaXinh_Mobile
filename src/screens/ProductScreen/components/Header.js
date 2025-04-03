@@ -14,20 +14,20 @@ import FilterModal from "./FilterModal"; // Import FilterModal
 
 const { height } = Dimensions.get("window");
 
-export const Header = ({ navigation }) => {
+export const Header = ({ navigation, applyFilters, clearFilters, currentFilters }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
-  const handleApplyFilter = () => {
-    console.log("Filters applied");
+  const handleApplyFilter = (filterValues) => {
+    applyFilters(filterValues);
     toggleModal();
   };
 
   const handleClearFilter = () => {
-    console.log("Filters cleared");
+    clearFilters();
     toggleModal();
   };
 
@@ -54,6 +54,7 @@ export const Header = ({ navigation }) => {
         toggleModal={toggleModal}
         onApply={handleApplyFilter}
         onClear={handleClearFilter}
+        currentFilters={currentFilters}
       />
     </View>
   );

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
@@ -48,39 +49,53 @@ const PaymentMethodScreen = ({ route }) => {
     return isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null;
   };
 
+  // Hàm xử lý kết quả thanh toán
+  const handlePaymentResult = (url) => {
+    // Kiểm tra mã phản hồi của giao dịch
+    if (url.includes('vnp_ResponseCode=00')) {
+      Alert.alert('Thanh toán thành công', 'Giao dịch của bạn đã được xử lý thành công.', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    } else {
+      Alert.alert('Thanh toán thất bại', 'Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại!', [
+        { text: 'OK' },
+      ]);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header navigation={navigation} title="Thanh toán" />
       {checkLoading()}
-        {isRefreshing ? (
-          <Text style={styles.waitingText}>Đang kết nối với cổng thanh toán...</Text>
-        ) : paymentUrl ? (
-          <WebView
-            source={{ uri: paymentUrl }}  
-            javaScriptEnabled={true}
-            scalesPageToFit={true}
-            domStorageEnabled={true}
-            startInLoadingState={true}
-            style={{ flex: 1}}
-            onLoad={() => {
-              setIsLoading(false);  // Trang đã tải xong
-              console.log('WebView loaded');
-            }}
-            onError={err => {
-              console.log('Lỗi khi tải WebView: ', err);
-              alert('Có lỗi khi tải trang thanh toán!');
-            }}
-            onNavigationStateChange={navState => {
-              console.log('Navigation state:', navState);
-              if (navState.url.includes('vnp_ResponseCode')) {
-                // Xử lý kết quả thanh toán tại đây
-                console.log('Kết quả thanh toán:', navState.url);
-              }
-            }}
-          />
-        ) : (
-          <Text style={styles.waitingText}>Đang chờ kết nối thanh toán...</Text>
-        )}
+      {isRefreshing ? (
+        <Text style={styles.waitingText}>Đang kết nối với cổng thanh toán...</Text>
+      ) : paymentUrl ? (
+        <WebView
+          source={{ uri: paymentUrl }}  
+          javaScriptEnabled={true}
+          scalesPageToFit={true}
+          domStorageEnabled={true}
+          startInLoadingState={true}
+          style={{ flex: 1 }}
+          onLoad={() => {
+            setIsLoading(false);  // Trang đã tải xong
+            console.log('WebView loaded');
+          }}
+          onError={err => {
+            console.log('Lỗi khi tải WebView: ', err);
+            alert('Có lỗi khi tải trang thanh toán!');
+          }}
+          onNavigationStateChange={navState => {
+            console.log('Navigation state:', navState);
+            if (navState.url.includes('vnp_ResponseCode')) {
+              // Xử lý kết quả thanh toán tại đây
+              handlePaymentResult(navState.url);
+            }
+          }}
+        />
+      ) : (
+        <Text style={styles.waitingText}>Đang chờ kết nối thanh toán...</Text>
+      )}
     </SafeAreaView>
   );
 };
