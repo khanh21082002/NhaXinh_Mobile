@@ -11,7 +11,7 @@ import {
 import CustomText from "../../../components/UI/CustomText";
 import { AppColors } from "../../../styles";
 
-const FilterModal = ({ visible, toggleModal, onApply, onClear, currentFilters }) => {
+const FilterModal = ({ visible, toggleModal, onApply, onClear, currentFilters , materials }) => {
   const [priceFilter, setPriceFilter] = useState(currentFilters?.price || "Tất cả");
   const [materialFilter, setMaterialFilter] = useState(currentFilters?.material || "Tất cả");
   const [priceDropdownVisible, setPriceDropdownVisible] = useState(false);
@@ -23,7 +23,7 @@ const FilterModal = ({ visible, toggleModal, onApply, onClear, currentFilters })
     "Theo giá: Cao đến thấp",
   ];
 
-  const materialOptions = ["Tất cả", "Da", "Gỗ", "Da và vải"];
+  const materialOptions = ["Tất cả", ...materials.map((material) => material.name)];
 
   const handlePriceChange = (value) => {
     setPriceFilter(value);
@@ -40,6 +40,7 @@ const FilterModal = ({ visible, toggleModal, onApply, onClear, currentFilters })
       price: priceFilter,
       material: materialFilter
     });
+    
   };
 
   const handleClearFilters = () => {

@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {jwtDecode} from 'jwt-decode';
 // import { API_URL } from '../../utils/Config';
-import {API_URL_NHAXINH} from '../../utils/Config';
+import {API_URL_NHAXINH, WEB_CLIENT_ID} from '../../utils/Config';
 import {timeoutPromise} from '../../utils/Tools';
 
 export const AUTH_LOADING = 'AUTH_LOADING';
@@ -143,6 +143,7 @@ export const Login = (email, password) => {
       }
       //Get User
       const jwtToken = resData;
+      const expireTime = decodedToken.exp * 1000;
       const userResponse = await fetch(
         `${API_URL_NHAXINH}/Profile/GetCurrentUserProfile`,
         {
@@ -163,7 +164,14 @@ export const Login = (email, password) => {
 
       const userData = await userResponse.json();
 
-      saveDataToStorage('users', userData);
+      const userWithToken = {
+        ...userData,
+        password: password,
+        token: jwtToken,
+        expireTime: expireTime,
+      };
+
+      saveDataToStorage('users', JSON.stringify(userWithToken));
       dispatch(setLogoutTimer(60 * 60 * 1000));
       dispatch({
         type: LOGIN,
@@ -340,7 +348,7 @@ export const ChangePassword = (oldpassword, newpassword) => {
 };
 
 //Authentication Google
-export const AuthenticationGoogle = (tokenId) => {
+export const AuthenticationGoogle = tokenId => {
   return async dispatch => {
     dispatch({
       type: AUTH_LOADING,
@@ -348,14 +356,17 @@ export const AuthenticationGoogle = (tokenId) => {
     const pushToken = await AskingExpoToken();
     try {
       const response = await timeoutPromise(
-        fetch(`${API_URL_NHAXINH}/Login/LoginGoogle?id_token=${tokenId}&fcmToken=${pushToken}`, {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+        fetch(
+          `${API_URL_NHAXINH}/Login/LoginGoogle?id_token=${tokenId}&fcmToken=${pushToken}`,
+          {
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({}),
           },
-          method: 'POST',
-          body: JSON.stringify({}),
-        }),
+        ),
       );
       if (!response.ok) {
         dispatch({
@@ -392,7 +403,6 @@ export const AuthenticationGoogle = (tokenId) => {
 
       const userData = await userResponse.json();
 
-      saveDataToStorage('users', userData);
       dispatch(setLogoutTimer(60 * 60 * 1000));
       dispatch({
         type: LOGIN,
@@ -409,12 +419,25 @@ export const AuthenticationGoogle = (tokenId) => {
 export const Logout = () => {
   return async dispatch => {
     try {
+      if (!GoogleSignin.configure()) {
+        console.log("GoogleSignin chưa được cấu hình.");
+        // Cấu hình lại nếu chưa
+        await GoogleSignin.configure({
+          webClientId: WEB_CLIENT_ID,
+          offlineAccess: true,
+        });
+      }
+
       // Gọi Google Sign-Out và xóa quyền truy cập
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
+      const currentUser = await GoogleSignin.getCurrentUser();
+      if (currentUser) {
+        // Gọi Google Sign-Out và xóa quyền truy cập
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+      }
 
       // Xóa dữ liệu người dùng khỏi AsyncStorage
-      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('users');
 
       // Dispatch action LOGOUT để cập nhật Redux state
       dispatch({
@@ -426,6 +449,7 @@ export const Logout = () => {
     }
   };
 };
+
 
 //Auto log out
 let timer;

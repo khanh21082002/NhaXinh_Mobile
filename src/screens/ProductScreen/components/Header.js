@@ -14,7 +14,7 @@ import FilterModal from "./FilterModal"; // Import FilterModal
 
 const { height } = Dimensions.get("window");
 
-export const Header = ({ navigation, applyFilters, clearFilters, currentFilters }) => {
+export const Header = ({ navigation, applyFilters, clearFilters, currentFilters , materials }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const toggleModal = () => {
@@ -51,6 +51,7 @@ export const Header = ({ navigation, applyFilters, clearFilters, currentFilters 
       {/* Filter Modal */}
       <FilterModal
         visible={modalVisible}
+        materials={materials}
         toggleModal={toggleModal}
         onApply={handleApplyFilter}
         onClear={handleClearFilter}

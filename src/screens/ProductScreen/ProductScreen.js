@@ -6,15 +6,17 @@ import {useSelector} from 'react-redux';
 import Colors from '../../utils/Colors';
 //Component
 import {ProductBody} from './components';
+import Snackbar from '../../components/Notification/Snackbar';
 
 export const ProductScreen = props => {
   const products = useSelector(state => state.store.products);
+  const materials = useSelector(state => state.material.materials);
   const user = useSelector(state => state.auth.user);
   const [productsFilter, setProductsFilter] = useState(products);
   const [message, setMessage] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
   
-  // Enhanced search filter function that can handle both text search and filter criteria
+  
   const searchFilterFunction = (text, preFilteredData = null, filters = null) => {
     // Start with all products or pre-filtered data if provided
     let data = preFilteredData || products;
@@ -31,7 +33,7 @@ export const ProductScreen = props => {
       // Apply material filter
       if (filters.material !== "Tất cả") {
         data = data.filter(product => 
-          product.material === filters.material
+          product.materialName === filters.material
         );
       }
       
@@ -51,6 +53,7 @@ export const ProductScreen = props => {
       {showSnackbar && <Snackbar checkVisible={showSnackbar} message={message} />}
       <ProductBody
         user={user}
+        materials={materials}
         navigation={props.navigation}
         productsFilter={productsFilter}
         searchFilterFunction={searchFilterFunction}

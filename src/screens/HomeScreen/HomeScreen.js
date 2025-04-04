@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef, useMemo} from 'react';
 import {View, StyleSheet, FlatList, TouchableOpacity, Text} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {fetchProducts} from '../../reducers';
+import {fetchMaterial, fetchProducts} from '../../reducers';
 import Colors from '../../utils/Colors';
 import Animated, {
   useSharedValue,
@@ -36,10 +36,10 @@ export const HomeScreen = ({navigation}) => {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [color, setColor] = useState(AppColors.primary);
 
-  // Lấy danh sách sản phẩm và danh mục khi vào màn hình
   useEffect(() => {
     dispatch(fetchProducts());
     dispatch(fetchCategories());
+    dispatch(fetchMaterial());
   }, [dispatch]);
 
   useEffect(() => {

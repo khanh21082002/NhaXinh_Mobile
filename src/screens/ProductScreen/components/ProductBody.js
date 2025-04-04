@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 
 export const ProductBody = ({
   user,
+  materials,
   navigation,
   productsFilter,
   searchFilterFunction,
@@ -73,7 +74,7 @@ export const ProductBody = ({
     // Then apply material filter if not "All"
     if (filterValues.material !== "Tất cả") {
       filteredProducts = filteredProducts.filter(product => 
-        product.material === filterValues.material
+        product.materialName === filterValues.material
       );
     }
     
@@ -111,6 +112,7 @@ export const ProductBody = ({
     <View style={styles.container}>
       <Header 
         navigation={navigation} 
+        materials={materials}
         applyFilters={applyFilters}
         clearFilters={clearFilters}
         currentFilters={activeFilters}

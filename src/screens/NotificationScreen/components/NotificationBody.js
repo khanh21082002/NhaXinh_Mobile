@@ -48,7 +48,7 @@ const NotificationBody = ({
           data={notificationSection}
           onRefresh={loadNotification}
           refreshing={isRefreshing}
-          keyExtractor={item => item._id}
+          keyExtractor={item => item.notificationId}
           renderItem={({item}) => {
             return <NotificationItem navigation={navigation} item={item} />;
           }}
