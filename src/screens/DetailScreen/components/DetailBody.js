@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
 
 export const DetailBody = ({ item, color }) => {
+  console.log("item", item);
   const navigation = useNavigation();
   return (
     <View style={styles.footer}>
@@ -26,7 +27,7 @@ export const DetailBody = ({ item, color }) => {
             <StarRating rating={item.rating.rate} color={color} />
           </View> */}
 
-          <TouchableOpacity onPress={() => navigation.navigate("AR")} style={styles.arButton}>
+          <TouchableOpacity onPress={() => navigation.navigate("AR", { model3D: item.model3DUrl })} style={styles.arButton}>
             <AntDesign name="camera" size={20} color="#fff" />
             <CustomText style={styles.arButtonText}>Xem AR</CustomText>
           </TouchableOpacity>

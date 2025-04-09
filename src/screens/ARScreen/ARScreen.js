@@ -102,7 +102,8 @@ ViroAnimations.registerAnimations({
 });
 
 // // Màn hình chính để chạy AR
-const ARScreen = ({ navigation }) => {
+const ARScreen = ({ navigation , route  }) => {
+  const { model3D } = route.params;
   const [isARSupported, setIsARSupported] = useState(null);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -215,7 +216,11 @@ const ARScreen = ({ navigation }) => {
             <ViroARSceneNavigator
               ref={arNavigatorRef}
               autofocus={true}
-              initialScene={{ scene: ARViewerOptimized}}
+              initialScene={{ 
+                scene: () => (
+                  <ARViewerOptimized model3DUrl={model3D} />
+                ),
+              }}
               style={styles.f1}
             />
           )}

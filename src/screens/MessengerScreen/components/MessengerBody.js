@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 // Components
 import CustomText from "../../../components/UI/CustomText";
@@ -14,8 +15,33 @@ import MessengerBox from "../components/MessengerBox";
 import { AppColors } from "../../../styles";
 
 const MessengerBody = ({ messages, user, navigation, handleSendMessage }) => {
+  const flatListRef = useRef(null);
+
+  // Tự động cuộn xuống khi có tin nhắn mới
+  useEffect(() => {
+    if (messages.length > 0 && flatListRef.current) {
+      setTimeout(() => {
+        flatListRef.current.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
+
+  // Hiển thị trạng thái kết nối
+  const renderConnectionStatus = () => {
+    if (Object.keys(user).length === 0) return null;
+    
+    return (
+      <View style={styles.statusBar}>
+        <View style={styles.statusIndicator} />
+        <CustomText style={styles.statusText}>Đang hoạt động</CustomText>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
+      {renderConnectionStatus()}
+      
       {Object.keys(user).length === 0 ? (
         <View style={styles.center}>
           <CustomText style={{ fontSize: 16 }}>
@@ -33,14 +59,17 @@ const MessengerBody = ({ messages, user, navigation, handleSendMessage }) => {
         <View style={styles.messageContainer}>
           {messages.length === 0 ? (
             <View style={styles.center}>
-              <CustomText>Không có tin nhắn nào</CustomText>
+              <ActivityIndicator size="small" color={AppColors.primary} />
+              <CustomText style={styles.emptyText}>Đang tải tin nhắn...</CustomText>
             </View>
           ) : (
             <FlatList
+              ref={flatListRef}
               data={messages}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => <MessengerItem item={item} />}
-              contentContainerStyle={{ flexGrow: 1 }} // Đảm bảo danh sách mở rộng
+              contentContainerStyle={styles.listContent}
+              onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
             />
           )}
         </View>
@@ -48,7 +77,6 @@ const MessengerBody = ({ messages, user, navigation, handleSendMessage }) => {
 
       {/* MessengerBox luôn nằm ở cuối */}
       {Object.keys(user).length !== 0 && <MessengerBox onSend={handleSendMessage} />}
-
     </View>
   );
 };
@@ -59,7 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
   },
   messageContainer: {
-    flex: 1, // Đảm bảo phần danh sách tin nhắn mở rộng
+    flex: 1,
   },
   center: {
     flex: 1,
@@ -75,6 +103,33 @@ const styles = StyleSheet.create({
     borderColor: AppColors.primary,
     marginTop: 10,
   },
+  listContent: {
+    flexGrow: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  emptyText: {
+    marginTop: 10,
+    color: AppColors.gray,
+  },
+  statusBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: AppColors.lightGray,
+  },
+  statusIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'green',
+    marginRight: 5,
+  },
+  statusText: {
+    fontSize: 12,
+    color: AppColors.darkGray,
+  }
 });
 
 export default MessengerBody;

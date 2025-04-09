@@ -16,8 +16,7 @@ import { StyleSheet } from "react-native";
 ViroMaterials.createMaterials({
   heart: {
     lightingModel: "Blinn",
-    diffuseTexture: require("../../../assets/3D/Heart_D3.jpg"),
-    specularTexture: require("../../../assets/3D/Heart_S2.jpg"),
+    diffuseColor: '#CCCCCC',
     writesToDepthBuffer: true,
     readsFromDepthBuffer: true,
   },
@@ -27,7 +26,8 @@ const ARViewerWithGestures = () => {
   const [isTracking, setIsTracking] = useState(false);
   const [showObject, setShowObject] = useState(false);
   const [position, setPosition] = useState([0, 0, -1]);
-  const [scale, setScale] = useState([1, 1, 1]);
+
+  const [scale, setScale] = useState([0.15, 0.15, 0.15]);
   const [rotation, setRotation] = useState([0, 0, 0]);
   const timerRef = useRef(null);
 
@@ -120,11 +120,11 @@ const ARViewerWithGestures = () => {
     <ViroARScene onTrackingUpdated={onInitialized}>
       <ViroAmbientLight color="#ffffff" />
       {/* Selector for planes */}
-      <ViroARPlaneSelector onPlaneUpdate={onPlaneUpdate} />
+      {/* <ViroARPlaneSelector onPlaneUpdate={onPlaneUpdate} /> */}
       
       {showObject && (
         <Viro3DObject
-          source={require("../../../assets/3D/heart.obj")}
+          source={require("../../../assets/3D/model.obj")}
           materials={["heart"]}
           position={position}
           scale={scale}

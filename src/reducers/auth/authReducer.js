@@ -8,6 +8,7 @@ import {
   AUTH_FAILURE,
   FORGET_PASSWORD,
   RESET_PASSWORD,
+  GET_PROFILE_SUCCESS,
 } from './authActions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import UserMessages from '../../messages/user';
@@ -15,6 +16,7 @@ import UserMessages from '../../messages/user';
 const initialState = {
   user: {},
   token: '',
+  currentUser: {},
   notification: {},
   isLoading: false,
   error: false,
@@ -59,6 +61,12 @@ export const authReducer = (state = initialState, action) => {
         isLoading: false,
       };
 
+    case GET_PROFILE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+      };
+
     case LOGOUT:
       return {
         ...state,
@@ -76,28 +84,28 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         isLoading: false,
       };
-      case EDIT_INFO:
-        return {
-          ...state,
-          user: {
-            ...state.user, 
-            firstName: action.firstName, 
-            lastName: action.lastName, 
-            phone: action.phone, 
-            address: action.address,
-          },
-          isLoading: false,
-        };
-        case UPLOAD_PROFILEPIC:
-          return {
-            ...state,
-            user: {
-              ...state.user,
-              avatarUrl: action.avatarUrl,
-            },
-            isLoading: false,
-          };
-        default:
-          return state;
-      }
+    case EDIT_INFO:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          firstName: action.firstName,
+          lastName: action.lastName,
+          phone: action.phone,
+          address: action.address,
+        },
+        isLoading: false,
+      };
+    case UPLOAD_PROFILEPIC:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          avatarUrl: action.avatarUrl,
+        },
+        isLoading: false,
+      };
+    default:
+      return state;
+  }
 };

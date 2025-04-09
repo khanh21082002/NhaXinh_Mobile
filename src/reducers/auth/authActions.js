@@ -231,6 +231,41 @@ export const EditInfo = (firstName, lastName, phone, address) => {
   };
 };
 
+// export const getCurrentUser = () => {
+//   return async (dispatch, getState) => {
+//     const jwtToken = getState().auth.token;
+//     dispatch({
+//       type: AUTH_LOADING,
+//     });
+//     try {
+//       const response = await timeoutPromise(
+//         fetch(`${API_URL_NHAXINH}/User/CurrentUser`, {
+//           headers: {
+//             Authorization: `Bearer ${jwtToken}`,
+//             Accept: 'application/json',
+//           },
+//           method: 'GET',
+//         }),
+//       );
+//       if (!response.ok) {
+//         const errorResData = await response.json();
+//         dispatch({
+//           type: AUTH_FAILURE,
+//         });
+//         throw new Error(errorResData.err);
+//       }
+//       const resData = await response.json();
+//       dispatch({
+//         type: GET_PROFILE_SUCCESS,
+//         currentUser: resData,
+//       });
+//     } catch (err) {
+//       throw err;
+//     }
+//   };
+  
+// }
+
 //UploadProfilePic
 export const UploadProfilePic = (imageUri, filename, type) => {
   return async (dispatch, getState) => {
