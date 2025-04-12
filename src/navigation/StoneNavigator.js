@@ -66,6 +66,7 @@ import BankCardScreen from '../screens/BankScreen/BankCardScreen';
 import { PrivacyPolicyScreen } from '../screens/PrivacyPolicyScreen';
 import PaymentPolicyScreen from '../screens/PaymentPolicyScreen/PaymentPolicyScreen';
 import HistoryOrderScreen from '../screens/HIstoryOrderScreen/HistoryOrderScreen';
+import ChatListScreen from '../screens/MessengerScreen/ChatListScreen';
 
 
 
@@ -206,6 +207,7 @@ export const MessengerStackScreen = () => (
     }}
     // mode="modal"
   >
+    <MessengerStack.Screen name="ChatList" component={ChatListScreen} />
     <MessengerStack.Screen name="Messenger" component={MessengerScreen} />
   </MessengerStack.Navigator>
 );
@@ -357,7 +359,7 @@ export const DrawerNavigator = () => {
     },
     {
       name: 'Tin nhắn',
-      screen: MessengerScreen,
+      screen: MessengerStackScreen,
       label: 'Tin nhắn',
       icon: 'message',
     },

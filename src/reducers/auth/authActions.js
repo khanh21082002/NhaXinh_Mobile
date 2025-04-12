@@ -141,7 +141,7 @@ export const Login = (email, password) => {
       } catch (decodeError) {
         throw new Error('Lỗi token không hợp lệ');
       }
-      //Get User
+      // Get User
       const jwtToken = resData;
       const expireTime = decodedToken.exp * 1000;
       const userResponse = await fetch(
@@ -161,7 +161,24 @@ export const Login = (email, password) => {
           `Không thể lấy thông tin người dùng! Lỗi: ${errorText}`,
         );
       }
-
+      const currentUserResponse = await fetch(
+        `${API_URL_NHAXINH}/User/CurrentUser`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        },
+      );
+      if (!currentUserResponse.ok) {
+        const errorText = await currentUserResponse.text();
+        throw new Error(
+          `Không thể lấy thông tin người dùng! Lỗi: ${errorText}`,
+        );
+      }
+      const currentUser = await currentUserResponse.json();
       const userData = await userResponse.json();
 
       const userWithToken = {
@@ -171,11 +188,18 @@ export const Login = (email, password) => {
         expireTime: expireTime,
       };
 
+      const mergedUserData = {
+        ...userData,
+        ...currentUser,
+      };
+
       saveDataToStorage('users', JSON.stringify(userWithToken));
       dispatch(setLogoutTimer(60 * 60 * 1000));
+
+      // Dispatch action with both userData and currentUser
       dispatch({
         type: LOGIN,
-        user: userData,
+        user: mergedUserData,
         token: jwtToken,
       });
     } catch (err) {
@@ -183,6 +207,7 @@ export const Login = (email, password) => {
     }
   };
 };
+
 
 //EditInfo
 export const EditInfo = (firstName, lastName, phone, address) => {
