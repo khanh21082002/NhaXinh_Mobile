@@ -9,12 +9,16 @@ const UserComment = ({ comment }) => {
       <View style={styles.profileContainer}>
         <Image
           style={styles.profilePic}
-          source={require("../../../assets/images/defaultprofile.jpg")}
+          source={
+            comment.avatarUrl === "null"
+              ? require("../../../assets/images/defaultprofile.png")
+              : { uri: comment.avaterUrl }
+          }
         />
       </View>
       <View style={{ justifyContent: "center", width: "80%" }}>
-        <CustomText style={styles.name}>{comment.username}</CustomText>
-        <CustomText>{comment.content}</CustomText>
+        <CustomText style={styles.name}>{comment.userName}</CustomText>
+        <CustomText>{comment.comment}</CustomText>
       </View>
     </View>
   );

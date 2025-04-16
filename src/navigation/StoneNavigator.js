@@ -357,12 +357,6 @@ export const DrawerNavigator = () => {
       label: 'Liên Hệ',
       icon: 'contacts',
     },
-    {
-      name: 'Tin nhắn',
-      screen: MessengerStackScreen,
-      label: 'Tin nhắn',
-      icon: 'message',
-    },
   ];
 
   return (
@@ -433,6 +427,32 @@ export const DrawerNavigator = () => {
         />
       ) : (
         <>
+         <Drawer.Screen
+            name="Messenger"
+            component={MessengerStackScreen}
+            options={{
+              title: "Tin nhắn",
+              headerTitle: () => (
+                <CustomText
+                  style={{
+                    fontSize: 24,
+                    fontWeight: '500',
+                    color: AppColors.primary,
+                    fontFamily: 'Roboto-Medium',
+                  }}
+                >
+                  Tin nhắn
+                </CustomText>
+              ),
+              drawerIcon: ({ focused }) => (
+                <Icon
+                  name="message"
+                  size={25}
+                  color={focused ? AppColors.primary : Colors.grey}
+                />
+              ),
+            }}
+          />
           <Drawer.Screen
             name="TouchId"
             component={TouchIdScreen}

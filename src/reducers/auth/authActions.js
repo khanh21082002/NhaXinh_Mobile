@@ -461,12 +461,35 @@ export const AuthenticationGoogle = tokenId => {
         );
       }
 
+      const currentUserResponse = await fetch(
+        `${API_URL_NHAXINH}/User/CurrentUser`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        },
+      );
+      if (!currentUserResponse.ok) {
+        const errorText = await currentUserResponse.text();
+        throw new Error(
+          `Không thể lấy thông tin người dùng! Lỗi: ${errorText}`,
+        );
+      }
+      const currentUser = await currentUserResponse.json();
       const userData = await userResponse.json();
+
+      const mergedUserData = {
+        ...userData,
+        ...currentUser,
+      };
 
       dispatch(setLogoutTimer(60 * 60 * 1000));
       dispatch({
         type: LOGIN,
-        user: userData,
+        user: mergedUserData,
         token: jwtToken,
       });
     } catch (err) {

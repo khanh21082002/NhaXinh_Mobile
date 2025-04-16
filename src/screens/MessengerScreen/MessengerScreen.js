@@ -6,6 +6,8 @@ import Colors from '../../utils/Colors';
 
 const MessengerScreen = ({ route, navigation }) => {
   const { me, other} = route.params;
+
+  console.log(me, other);
   
   const conversationBuilder = TalkRn.getConversationBuilder(
     TalkRn.oneOnOneId(me, other)

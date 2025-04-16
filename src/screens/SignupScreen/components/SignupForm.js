@@ -207,7 +207,7 @@ const Signup = (props) => {
             <View style={{ flex: 1 }} />
           </View>
         </TouchableWithoutFeedback>
-        <View style={styles.center}>
+        {/* <View style={styles.center}>
           <CustomText style={styles.loginOpt}>
             Hoặc đăng ký bằng
           </CustomText>
@@ -234,7 +234,7 @@ const Signup = (props) => {
               />
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

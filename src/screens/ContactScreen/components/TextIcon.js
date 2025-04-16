@@ -12,7 +12,7 @@ export const TextIcon = ({ icon, text, url }) => {
         autoPlay
         loop
         resizeMode='contain'
-        style={{ height: 50, marginRight: 20 }}
+        style={{ height: 50, width: 50, marginRight: 20 }}
       />
       <TouchableOpacity
         onPress={() => {

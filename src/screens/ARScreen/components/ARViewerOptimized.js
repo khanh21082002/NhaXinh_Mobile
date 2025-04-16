@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   ViroARScene,
   ViroTrackingStateConstants,
@@ -12,7 +12,6 @@ import {
 import RNFS from 'react-native-fs';
 import {StyleSheet} from 'react-native';
 
-// Tạo vật liệu mặc định
 ViroMaterials.createMaterials({
   defaultMaterial: {
     lightingModel: 'Blinn',
@@ -26,15 +25,15 @@ ViroMaterials.createMaterials({
 const ARViewerWithGestures = ({model3DUrl}) => {
   const [isTracking, setIsTracking] = useState(false);
   const [showObject, setShowObject] = useState(false);
-  const [position, setPosition] = useState([0, 0, -1]);
-  const [scale, setScale] = useState([0.1, 0.1, 0.1]);
-  const [rotation, setRotation] = useState([0, 0, 0]);
-  const [localModelPath, setLocalModelPath] = useState(null);
-  const [mtlPath, setMtlPath] = useState(null);
   const [status, setStatus] = useState('Initializing...');
   const [error, setError] = useState(null);
+  const [localModelPath, setLocalModelPath] = useState(null);
+  const [mtlPath, setMtlPath] = useState(null);
 
-  // Tên file MTL cố định
+  const positionRef = useRef([0, 0, -1]); // Use useRef for position
+  const scaleRef = useRef([0.1, 0.1, 0.1]); // Use useRef for scale
+  const rotationRef = useRef([0, 0, 0]); // Use useRef for rotation
+
   const FIXED_MTL_FILENAME = 'universal_material.mtl';
 
   useEffect(() => {
@@ -53,15 +52,11 @@ const ARViewerWithGestures = ({model3DUrl}) => {
       setStatus('Preparing model...');
       setError(null);
 
-      // 1. Prepare paths
       const documentDir = RNFS.DocumentDirectoryPath;
       const mtlFilePath = `${documentDir}/${FIXED_MTL_FILENAME}`;
-
-      // 2. Create universal MTL file if it doesn't exist
       await createUniversalMTLFile(mtlFilePath);
       setMtlPath(mtlFilePath);
 
-      // 3. Download and prepare the OBJ model
       const modelPath = await downloadAndPrepareModel(model3DUrl, documentDir);
       setLocalModelPath(modelPath);
 
@@ -142,21 +137,16 @@ illum 2
 
   const downloadAndPrepareModel = async (url, documentDir) => {
     try {
-      // Clean and decode the URL
       const decodedUrl = decodeURIComponent(url);
       const cleanUrl = decodedUrl.split('?')[0];
       const originalFileName = cleanUrl.substring(
         cleanUrl.lastIndexOf('/') + 1,
       );
-
-      // Create safe filename
       const safeFileName = originalFileName.replace(/[^a-zA-Z0-9._-]/g, '_');
       const localPath = `${documentDir}/${safeFileName}`;
       const modifiedPath = `${documentDir}/modified_${safeFileName}`;
 
       setStatus(`Downloading model: ${originalFileName}`);
-
-      // Download the file if it doesn't exist
       const fileExists = await RNFS.exists(localPath);
       if (!fileExists) {
         const download = RNFS.downloadFile({
@@ -168,18 +158,10 @@ illum 2
             setStatus(`Downloading... ${progress.toFixed(0)}%`);
           },
         });
-
         await download.promise;
-
-        if (!(await RNFS.exists(localPath))) {
-          throw new Error('Download failed - file not created');
-        }
       }
 
-      // Read and modify the OBJ file
       let objContent = await RNFS.readFile(localPath, 'utf8');
-
-      // Update MTL reference
       const mtlRegex = /mtllib .*\.mtl/;
       if (mtlRegex.test(objContent)) {
         objContent = objContent.replace(
@@ -190,9 +172,7 @@ illum 2
         objContent = `mtllib ${FIXED_MTL_FILENAME}\n${objContent}`;
       }
 
-      // Write modified file
       await RNFS.writeFile(modifiedPath, objContent, 'utf8');
-
       setStatus('Model prepared successfully');
       return modifiedPath;
     } catch (err) {
@@ -208,34 +188,32 @@ illum 2
     }
   };
 
-  // Xử lý kéo thả
   const handleDrag = dragToPos => {
-    setPosition(dragToPos);
+    positionRef.current = dragToPos;
   };
 
-  // Xử lý pinch zoom
   const handlePinch = (pinchState, scaleFactor) => {
     if (pinchState === 3) {
-      // STATE_CHANGED
-      setScale([
-        scale[0] * scaleFactor,
-        scale[1] * scaleFactor,
-        scale[2] * scaleFactor,
-      ]);
+      scaleRef.current = [
+        scaleRef.current[0] * scaleFactor,
+        scaleRef.current[1] * scaleFactor,
+        scaleRef.current[2] * scaleFactor,
+      ];
     }
   };
 
-  // Xử lý xoay
   const handleRotate = (rotateState, rotationFactor) => {
     if (rotateState === 3) {
-      // STATE_CHANGED
-      setRotation([rotation[0], rotation[1] - rotationFactor, rotation[2]]);
+      rotationRef.current = [
+        rotationRef.current[0],
+        rotationRef.current[1] - rotationFactor,
+        rotationRef.current[2],
+      ];
     }
   };
 
   return (
     <ViroARScene onTrackingUpdated={onInitialized}>
-      {/* Ánh sáng */}
       <ViroAmbientLight color="#ffffff" intensity={500} />
       <ViroSpotLight
         innerAngle={5}
@@ -247,15 +225,14 @@ illum 2
         castsShadow={true}
       />
 
-      {/* Hiển thị model 3D */}
       {showObject && localModelPath && mtlPath && (
         <ViroARPlaneSelector>
           <Viro3DObject
             source={{uri: `file://${localModelPath}`}}
             resources={[{uri: `file://${mtlPath}`}]}
-            position={position}
-            scale={scale}
-            rotation={rotation}
+            position={positionRef.current}
+            scale={scaleRef.current}
+            rotation={rotationRef.current}
             type="OBJ"
             materials={['defaultMaterial']}
             onDrag={handleDrag}

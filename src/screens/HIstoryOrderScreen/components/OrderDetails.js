@@ -31,6 +31,10 @@ const OrderDetails = ({orderId}) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
+  const handleRatePress = () => {
+    console.log('Đánh giá sản phẩm');
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -97,7 +101,7 @@ const OrderDetails = ({orderId}) => {
               </View>
               <View>
                 <Text style={styles.deliveryStatusText}>
-                  {order.status === 'shipped' ? 'Đang giao hàng' : 'Đã giao'}
+                  {order.status === 'shipped' ? 'Đã giao hàng' : 'Đã giao hàng'}
                 </Text>
                 <Text style={styles.deliveryDate}>
                   {new Date(order.createdAt).toLocaleString()}
@@ -129,7 +133,7 @@ const OrderDetails = ({orderId}) => {
         <TouchableOpacity style={styles.complaintButton}>
           <Text style={styles.complaintButtonText}>Khiếu nại</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.rateButton}>
+        <TouchableOpacity style={styles.rateButton} onPress={handleRatePress}>
           <Text style={styles.rateButtonText}>Đánh giá</Text>
         </TouchableOpacity>
       </View>

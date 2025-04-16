@@ -4,10 +4,8 @@ import { useSelector } from "react-redux";
 import Colors from "../../../utils/Colors";
 import CustomText from "../../../components/UI/CustomText";
 import userMessages from "../../../messages/user";
-// Authentiation Touch ID Face ID
 import TouchID from "react-native-touch-id";
 import * as Keychain from "react-native-keychain";
-// PropTypes check
 import PropTypes from "prop-types";
 import { AppColors } from "../../../styles";
 
@@ -18,9 +16,21 @@ export const AuthBody = () => {
 
   const switchHandler = async () => {
     setIsEnabled((previousState) => !previousState);
+
     if (!isEnabled) {
+      // Enable Touch/Face ID - Save credentials in Keychain
       await Keychain.setGenericPassword(user.email, user.password);
+      // Trigger authentication
+      TouchID.authenticate('Authenticate using fingerprint or face ID')
+        .then(() => {
+          console.log('Authenticated successfully');
+        })
+        .catch((error) => {
+          console.error('Authentication failed', error);
+          setIsEnabled(false); // Reset the switch state if authentication fails
+        });
     } else {
+      // Disable Touch/Face ID - Reset credentials in Keychain
       await Keychain.resetGenericPassword();
     }
   };

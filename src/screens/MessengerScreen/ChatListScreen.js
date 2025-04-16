@@ -63,7 +63,6 @@ const ChatListScreen = ({navigation}) => {
       email: selectedUser.email || '',
       photoUrl: selectedUser.avatarUrl || null,
     };
-
     navigation.navigate('Messenger', {me, other});
   };
 

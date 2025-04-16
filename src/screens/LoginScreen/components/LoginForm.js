@@ -248,7 +248,7 @@ const Login = (props) => {
             Hoặc đăng nhập bằng
           </CustomText>
           <View style={styles.circleImage}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={
                 Platform.OS === 'android' ? showAndroidAlert : scanFingerprintOrFaceId
               }
@@ -257,8 +257,8 @@ const Login = (props) => {
                 source={require('../../../assets/images/faceid.png')}
                 style={styles.img}
               />
-            </TouchableOpacity>
-            <TouchableOpacity
+            </TouchableOpacity> */}
+            {/* <TouchableOpacity
             >
               <Image
                 source={require('../../../assets/images/instagram.png')}
@@ -271,7 +271,7 @@ const Login = (props) => {
                 source={require('../../../assets/images/facebook.png')}
                 style={styles.img}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity 
               onPress={onGoogleButtonPress}
             >

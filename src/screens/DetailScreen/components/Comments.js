@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -8,70 +8,105 @@ import {
   Image,
   Platform,
   FlatList,
-  ScrollView
-} from "react-native";
-import Entypo from "react-native-vector-icons/Entypo";
-import { useSelector } from "react-redux";
-import CustomText from "../../../components/UI/CustomText";
-import Colors from "../../../utils/Colors";
-import comments from "../../../db/Comments";
-import UserComment from "./UserComment";
+  ScrollView,
+} from 'react-native';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {useSelector, useDispatch} from 'react-redux';
+import CustomText from '../../../components/UI/CustomText';
+import Colors from '../../../utils/Colors';
+import UserComment from './UserComment';
+import {addToReview, fetchReview} from '../../../reducers';
 
-const { width } = Dimensions.get("window");
+const {width} = Dimensions.get('window');
 
-export const Comments = () => {
-  const user = useSelector((state) => state.auth.user);
-  const [textComment, setTextComment] = useState("");
+export const Comments = item => {
+  const dispatch = useDispatch();
+  const user = useSelector(state => state.auth.user);
+  const comments = useSelector(state => state.review.reviews);
+  const isLoading = useSelector(state => state.review.isLoading); // Trạng thái loading
+  const [textComment, setTextComment] = useState('');
   const [showAllComments, setShowAllComments] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchReview(item.item.productId));
+  }, [dispatch, item.item.productId]);
+
+  const handleCommentSubmit = () => {
+    if (textComment.trim().length > 0) {
+      dispatch(addToReview(item.item.productId, textComment, 5));
+      setTextComment('');
+    }
+  };
 
   // Toggle hiển thị tất cả bình luận
   const handleShowMore = () => setShowAllComments(!showAllComments);
 
-  // Chỉ hiển thị 4 comment đầu nếu chưa bấm "Xem thêm"
-  const displayedComments = showAllComments ? comments : comments.slice(0, 4);
+  const sortedComments = Array.isArray(comments)
+    ? comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    : [];
 
+  // Chỉ hiển thị 4 comment đầu nếu chưa bấm "Xem thêm"
+  const displayedComments = showAllComments
+    ? sortedComments
+    : sortedComments.slice(0, 4);
+
+  // Check if user has a verified purchase
+  const hasVerifiedPurchase = comments.some(
+    comment => comment.verifiedPurchase,
+  );
   return (
     <View style={styles.commentContainer}>
       <CustomText style={styles.title}>Bình luận</CustomText>
       <CustomText style={styles.commentCount}>{comments.length}</CustomText>
 
       {/* Input nhập bình luận */}
-      {Object.keys(user).length !== 0 && (
+      {Object.keys(user).length !== 0 && hasVerifiedPurchase && (
         <View style={styles.inputContainer}>
           <Image
             style={styles.profilePic}
             source={
               user.avatarUrl?.length === 0
-                ? require("../../../assets/images/defaultprofile.jpg")
-                : { uri: user.avatarUrl }
+                ? require('../../../assets/images/defaultprofile.jpg')
+                : {uri: user.avatarUrl}
             }
           />
           <TextInput
             placeholder="Thêm bình luận công khai..."
             style={styles.input}
-            onChangeText={setTextComment}
+            onChangeText={text => setTextComment(text)}
+            value={textComment}
           />
           <Entypo
             name="paper-plane"
             size={25}
             color={textComment.length === 0 ? Colors.grey : Colors.blue}
+            onPress={handleCommentSubmit}
           />
         </View>
       )}
 
+      {/* Hiển thị loading khi đang thêm bình luận */}
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <CustomText>Đang gửi bình luận...</CustomText>
+        </View>
+      ) : null}
+
       {/* Danh sách bình luận */}
       <FlatList
         data={displayedComments}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <UserComment comment={item} />}
-        nestedScrollEnabled = {true}
+        keyExtractor={item => item.reviewId.toString()}
+        renderItem={({item}) => <UserComment comment={item} />}
+        nestedScrollEnabled={true}
       />
 
       {/* Nút xem thêm */}
       {comments.length > 4 && (
-        <TouchableOpacity onPress={handleShowMore} style={styles.showMoreButton}>
+        <TouchableOpacity
+          onPress={handleShowMore}
+          style={styles.showMoreButton}>
           <CustomText style={styles.showMoreText}>
-            {showAllComments ? "Ẩn bớt" : "Xem thêm"}
+            {showAllComments ? 'Ẩn bớt' : 'Xem thêm'}
           </CustomText>
         </TouchableOpacity>
       )}
@@ -87,7 +122,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   commentCount: {
     fontSize: 15,
@@ -95,8 +130,8 @@ const styles = StyleSheet.create({
     color: Colors.grey,
   },
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: Colors.light_grey,
     paddingVertical: 10,
@@ -116,12 +151,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   showMoreButton: {
-    alignSelf: "center",
+    alignSelf: 'center',
     paddingVertical: 10,
   },
   showMoreText: {
     fontSize: 14,
     color: Colors.blue,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 10,
   },
 });

@@ -21,6 +21,7 @@ import {
   notificationReducer,
   materialReducer,
   userReducer,
+  reviewReducer,
 
 } from './src/reducers';
 import LocalNotification from './src/components/Notification/LocalNotification';
@@ -36,6 +37,7 @@ const rootReducer = combineReducers({
   notification: notificationReducer,
   material: materialReducer,
   employ : userReducer,
+  review : reviewReducer,
   form: formReducer,
 });
 

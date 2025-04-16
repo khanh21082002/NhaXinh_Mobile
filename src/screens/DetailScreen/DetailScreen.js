@@ -53,7 +53,7 @@ export const DetailScreen = (props) => {
                 <DetailBody item={item} color={color} />
               </>
             }
-            ListFooterComponent={<Comments />}
+            ListFooterComponent={<Comments item={item} />}
             showsVerticalScrollIndicator={false}
           />
 

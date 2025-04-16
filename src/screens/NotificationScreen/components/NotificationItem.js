@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-
+import moment from 'moment';
+moment.locale('vi');
 const NotificationItem = ({ item, onPress }) => {
   
   return (
@@ -19,7 +20,7 @@ const NotificationItem = ({ item, onPress }) => {
         {item.message && (
           <Text style={styles.description} numberOfLines={2}>{item.message}</Text>
         )}
-        <Text style={styles.time}>{item.createdDate}</Text>
+        <Text style={styles.time}>{moment(item.createdDate).format('Do MMMM YYYY, hh:mm a')}</Text>
       </View>
     </TouchableOpacity>
   );

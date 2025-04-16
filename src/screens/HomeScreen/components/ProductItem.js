@@ -34,6 +34,14 @@ const ProductItem = ({ navigation, item, setModalVisible , setMessage , setShowS
     }
   };
 
+  const isNewProduct = () => {
+    const currentDate = new Date();
+    const productDate = new Date(item.createdAt);
+    const diffTime = currentDate - productDate;
+    const diffDays = diffTime / (1000 * 3600 * 24); 
+    return diffDays <= 15; // Show 'New' if within the last 15 days
+  };
+
   return (
     <TouchableOpacity onPress={toDetail} style={styles.container}>
       {/* Hình ảnh sản phẩm */}
@@ -57,9 +65,11 @@ const ProductItem = ({ navigation, item, setModalVisible , setMessage , setShowS
       </View>
 
       {/* Nhãn "New" */}
-      <View style={styles.newLabel}>
-        <Text style={styles.newText}>New</Text>
-      </View>
+      {isNewProduct() && (
+        <View style={styles.newLabel}>
+          <Text style={styles.newText}>New</Text>
+        </View>
+      )}
 
       {/* Thông tin sản phẩm */}
       <View style={styles.infoContainer}>

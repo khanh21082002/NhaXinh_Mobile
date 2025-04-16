@@ -83,13 +83,13 @@ export const FavoriteItem = ({ navigation, item }) => {
   const RightActions = (progress) => {
     return (
       <View style={{ width: 170, flexDirection: "row" }}>
-        {renderRightAction(
+        {/* {renderRightAction(
           "Thêm vào giỏ",
           "#ffab00",
           addToCartAct,
           140,
           progress
-        )}
+        )} */}
         {renderRightAction(
           "Bỏ thích",
           Colors.red,

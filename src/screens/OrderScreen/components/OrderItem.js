@@ -83,7 +83,7 @@ export const OrderItem = ({order, user, productList}) => {
                 Phương thức thanh toán:{' '}
               </CustomText>
               <CustomText style={styles.detail}>
-                {order.paymentMethod === 'Cash'
+                {order.paymentMethod === 'cash'
                   ? 'Thanh toán bằng tiền mặt'
                   : order.paymentMethod === 'Banking'
                   ? 'Thanh toán qua ngân hàng'
