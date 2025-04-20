@@ -31,7 +31,8 @@ const ARViewerWithGestures = ({model3DUrl}) => {
   const [mtlPath, setMtlPath] = useState(null);
 
   const positionRef = useRef([0, 0, -1]); // Use useRef for position
-  const scaleRef = useRef([0.1, 0.1, 0.1]); // Use useRef for scale
+  // const scaleRef = useRef([0.1, 0.1, 0.1]); // Use useRef for scale
+  const [scale, setScale] = useState([0.1, 0.1, 0.1]);
   const rotationRef = useRef([0, 0, 0]); // Use useRef for rotation
 
   const FIXED_MTL_FILENAME = 'universal_material.mtl';
@@ -192,16 +193,26 @@ illum 2
     positionRef.current = dragToPos;
   };
 
+  // const handlePinch = (pinchState, scaleFactor) => {
+  //   if (pinchState === 3) {
+  //     scaleRef.current = [
+  //       scaleRef.current[0] * scaleFactor,
+  //       scaleRef.current[1] * scaleFactor,
+  //       scaleRef.current[2] * scaleFactor,
+  //     ];
+  //   }
+  // };
+
   const handlePinch = (pinchState, scaleFactor) => {
     if (pinchState === 3) {
-      scaleRef.current = [
-        scaleRef.current[0] * scaleFactor,
-        scaleRef.current[1] * scaleFactor,
-        scaleRef.current[2] * scaleFactor,
-      ];
+      // Using the setter function to update scale state
+      setScale(currentScale => [
+        currentScale[0] * scaleFactor,
+        currentScale[1] * scaleFactor,
+        currentScale[2] * scaleFactor,
+      ]);
     }
   };
-
   const handleRotate = (rotateState, rotationFactor) => {
     if (rotateState === 3) {
       rotationRef.current = [
@@ -231,7 +242,8 @@ illum 2
             source={{uri: `file://${localModelPath}`}}
             resources={[{uri: `file://${mtlPath}`}]}
             position={positionRef.current}
-            scale={scaleRef.current}
+            // scale={scaleRef.current}
+            scale={scale}
             rotation={rotationRef.current}
             type="OBJ"
             materials={['defaultMaterial']}

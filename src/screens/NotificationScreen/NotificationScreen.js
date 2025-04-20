@@ -46,6 +46,12 @@ export const NotificationScreen = ({navigation}) => {
     loadNotification();
   }, []);
 
+  const notificationSort = notifications.sort((a, b) => {
+    const dateA = new Date(a.createdDate).getTime();
+    const dateB = new Date(b.createdDate).getTime();
+    return dateB - dateA;
+  });
+
   console.log(notifications);
 
   return (
@@ -56,7 +62,7 @@ export const NotificationScreen = ({navigation}) => {
       ) : (
         <NotificationBody
           user={user}
-          notificationSection={notifications}
+          notificationSection={notificationSort}
           navigation={navigation}
           loadNotification={loadNotification}
           isRefreshing={isRefreshing}

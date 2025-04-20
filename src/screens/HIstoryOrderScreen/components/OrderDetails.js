@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import PaymentDetails from './PaymentDetails';
-import { AppColors } from '../../../styles';
+import {AppColors} from '../../../styles';
 
 const OrderDetails = ({orderId}) => {
   // Lấy dữ liệu từ Redux store
@@ -33,7 +33,7 @@ const OrderDetails = ({orderId}) => {
 
   const handleRatePress = () => {
     console.log('Đánh giá sản phẩm');
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -101,10 +101,14 @@ const OrderDetails = ({orderId}) => {
               </View>
               <View>
                 <Text style={styles.deliveryStatusText}>
-                  {order.status === 'shipped' ? 'Đã giao hàng' : 'Đã giao hàng'}
+                  {order.status === 'received'
+                    ? 'Đã nhận hàng'
+                    : 'Đã nhận hàng'}
                 </Text>
                 <Text style={styles.deliveryDate}>
-                  {new Date(order.createdAt).toLocaleString()}
+                  {new Date(order.createdAt).toLocaleString('vi-VN', {
+                    timeZone: 'Asia/Ho_Chi_Minh',
+                  })}
                 </Text>
               </View>
             </View>
@@ -121,7 +125,7 @@ const OrderDetails = ({orderId}) => {
               <Text style={styles.paymentLabel}>Thanh toán</Text>
               <Text style={styles.paymentValue}>
                 {order.paymentMethod === 'cash'
-                  ? 'Chưa thanh toán'
+                  ? 'Đã thanh toán'
                   : 'Đã thanh toán'}
               </Text>
             </View>

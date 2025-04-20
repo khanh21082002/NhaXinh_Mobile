@@ -5,6 +5,7 @@ import {
   Dimensions,
   Platform,
   ActivityIndicator,
+  TextInput, // Import TextInput for house number
 } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -18,14 +19,12 @@ const Address = ({getInfo}) => {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-
   const [selectedProvince, setSelectedProvince] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedWard, setSelectedWard] = useState('');
-
+  const [houseNumber, setHouseNumber] = useState(''); // State for house number
   const [loading, setLoading] = useState(true);
 
-  // Gọi API lấy danh sách tỉnh/thành phố khi component được mount
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
@@ -43,19 +42,17 @@ const Address = ({getInfo}) => {
     fetchProvinces();
   }, []);
 
-  // Khi chọn tỉnh/thành phố -> Lọc danh sách quận/huyện
   const handleSelectProvince = provinceCode => {
     const province = provinces.find(p => p.code === provinceCode);
     if (province) {
       setDistricts(province.districts);
-      setWards([]); // Reset danh sách xã/phường
+      setWards([]); // Reset wards
       setSelectedProvince(province.name);
       setSelectedDistrict('');
       setSelectedWard('');
     }
   };
 
-  // Khi chọn quận/huyện -> Lọc danh sách xã/phường
   const handleSelectDistrict = districtCode => {
     const district = districts.find(d => d.code === districtCode);
     if (district) {
@@ -65,7 +62,6 @@ const Address = ({getInfo}) => {
     }
   };
 
-  // Khi chọn xã/phường
   const handleSelectWard = wardCode => {
     const ward = wards.find(w => w.code === wardCode);
     if (ward) {
@@ -73,18 +69,15 @@ const Address = ({getInfo}) => {
     }
   };
 
-  
-
-  // Cập nhật địa chỉ lên `getInfo`
+  // Update address when any field changes
   useEffect(() => {
-    getInfo(selectedProvince, selectedDistrict, selectedWard);
-  }, [selectedProvince, selectedDistrict, selectedWard]);
+    getInfo(selectedProvince, selectedDistrict, selectedWard, houseNumber);
+  }, [selectedProvince, selectedDistrict, selectedWard, houseNumber]);
 
   return (
     <View style={styles.container}>
       <CustomText style={styles.title}>Địa chỉ nhận hàng</CustomText>
 
-      {/* Loading Indicator */}
       {loading ? (
         <ActivityIndicator size="large" color={Colors.primary} />
       ) : null}
@@ -95,11 +88,7 @@ const Address = ({getInfo}) => {
           onValueChange={value => handleSelectProvince(value)}
           placeholder={{label: 'Chọn Tỉnh/Thành phố', value: null}}
           items={provinces.map(p => ({label: p.name, value: p.code}))}
-          value={
-            selectedProvince
-              ? provinces.find(p => p.name === selectedProvince)?.code
-              : null
-          }
+          value={selectedProvince ? provinces.find(p => p.name === selectedProvince)?.code : null}
           style={pickerSelectStyles}
         />
         {Platform.OS === 'ios' && (
@@ -113,11 +102,7 @@ const Address = ({getInfo}) => {
           onValueChange={value => handleSelectDistrict(value)}
           placeholder={{label: 'Chọn Quận/Huyện', value: null}}
           items={districts.map(d => ({label: d.name, value: d.code}))}
-          value={
-            selectedDistrict
-              ? districts.find(d => d.name === selectedDistrict)?.code
-              : null
-          }
+          value={selectedDistrict ? districts.find(d => d.name === selectedDistrict)?.code : null}
           style={pickerSelectStyles}
         />
         {Platform.OS === 'ios' && (
@@ -131,14 +116,23 @@ const Address = ({getInfo}) => {
           onValueChange={value => handleSelectWard(value)}
           placeholder={{label: 'Chọn Xã/Phường', value: null}}
           items={wards.map(w => ({label: w.name, value: w.code}))}
-          value={
-            selectedWard ? wards.find(w => w.name === selectedWard)?.code : null
-          }
+          value={selectedWard ? wards.find(w => w.name === selectedWard)?.code : null}
           style={pickerSelectStyles}
         />
         {Platform.OS === 'ios' && (
           <Icon style={styles.icon} name="keyboard-arrow-down" size={25} />
         )}
+      </View>
+
+      {/* Nhập số nhà */}
+      <View style={styles.boxSelect}>
+        <TextInput
+          style={styles.input}
+          placeholder="Nhập Địa chỉ cụ thể (Số nhà, đường,...)"
+          value={houseNumber}
+          onChangeText={setHouseNumber}
+          keyboardType="default"
+        />
       </View>
     </View>
   );
@@ -176,6 +170,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10,
   },
+  input: {
+    width: width - 30,
+    paddingLeft: 10,
+    fontSize: 15,
+  },
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -187,7 +186,6 @@ const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     fontSize: 15,
     color: 'black',
-    
   },
 });
 

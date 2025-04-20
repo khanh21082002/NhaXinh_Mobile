@@ -25,10 +25,10 @@ export const OrderItem = ({order, user, productList}) => {
         return 1;
       case 'processing':
         return 2;
-      case 'shipped':
+      case 'delivered':
         return 3;
-      case 'delivery':
-        return 4;
+      // case 'received':
+      //   return 4;
       default:
         return -1;
     }

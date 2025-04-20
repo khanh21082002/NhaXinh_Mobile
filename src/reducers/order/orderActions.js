@@ -26,6 +26,8 @@ export const fetchOrder = () => {
           method: 'GET',
         }),
       );
+
+      console.log('response', response);
       if (!response.ok) {
         dispatch({
           type: ORDER_FAILURE,
@@ -33,7 +35,6 @@ export const fetchOrder = () => {
         throw new Error("Something went wrong! Can't get your order");
       }
       const resData = await response.json();
-      console.log("Order", resData);
       const orders = resData || [];
       dispatch({
         type: FETCH_ORDER,

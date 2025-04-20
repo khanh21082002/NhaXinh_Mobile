@@ -29,6 +29,7 @@ export const PreOrderScreen = props => {
   const [province, setProvince] = useState('');
   const [town, setTown] = useState('');
   const [ward, setWard] = useState('');
+  const [houseNumber, setHouseNumber] = useState(''); // State for house number
   useEffect(() => {
     return () => {
       unmounted.current = true;
@@ -44,10 +45,11 @@ export const PreOrderScreen = props => {
     }
     return;
   }, [isFocused]);
-  const getInfo = (province, town , ward) => {
+  const getInfo = (province, town , ward , houseNumber) => {
     setProvince(province);
     setTown(town);
     setWard(ward);
+    setHouseNumber(houseNumber);
   };
   const getReceiver = (name, phone, address) => {
     setName(name);
@@ -63,7 +65,7 @@ export const PreOrderScreen = props => {
   });
 
   const shippingAddress = `${province}`;
-  const fullAddress = `${province}, ${town} ,${ward}`;
+  const fullAddress = `${province}, ${town} ,${ward} , ${houseNumber}`;
   const toPayment = async () => {
     try {
       if (error == undefined && province.length !== 0 && town.length !== 0 && ward.length !== 0) {

@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import moment from 'moment';
 moment.locale('vi');
@@ -13,7 +14,11 @@ const NotificationItem = ({ item, onPress }) => {
     <TouchableOpacity onPress={onPress} style={styles.item}>
       {item.isRead && <View style={styles.unreadDot} />}
       <View style={styles.iconContainer}>
-        {/* {icon} */}
+        <Image
+          style={styles.icon}
+          source={ require('../../../assets/images/logo.png')}
+          resizeMode="contain"
+        />
       </View>
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
@@ -34,6 +39,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E5E5E5',
     position: 'relative',
+  },
+  icon: {
+    width: 40,
+    height: 40,
   },
   unreadDot: {
     position: 'absolute',

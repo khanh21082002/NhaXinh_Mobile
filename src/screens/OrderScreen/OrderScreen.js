@@ -33,6 +33,8 @@ export const OrderScreen = ({ navigation }) => {
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
+  console.log("orders", orders);
+
   return (
     <View style={styles.container}>
       {/* <Header navigation={navigation} /> */}
