@@ -16,6 +16,7 @@ import { AppColors } from "../../../styles";
 
 export const ProfilePic = ({
   user,
+  totalSpent,
   imageUri,
   setImageUri,
   setFilename,
@@ -53,6 +54,15 @@ export const ProfilePic = ({
     }
   };
   
+  const getMembershipLevel = (totalSpent) => {
+    if (totalSpent >= 50000000) {
+      return "Hạng Vàng";
+    } else if (totalSpent >= 10000000) {
+      return "Hạng Bạc";
+    } else {
+      return "Hạng Đồng";
+    }
+  };
   
 
   return (
@@ -92,8 +102,13 @@ export const ProfilePic = ({
       <View style={styles.priceCard}>
         <Text style={styles.label}>Tổng chi tiêu</Text>
         <View style={styles.balanceContainer}>
-          <Text style={styles.balanceAmount}>8.450.000</Text>
-          <Text style={styles.balanceType}> | Hạng Bạc</Text>
+          <Text style={styles.balanceAmount}>
+            {totalSpent.toLocaleString("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            })}
+          </Text>
+          <Text style={styles.balanceType}> | {getMembershipLevel(totalSpent)}</Text>
         </View>
       </View>
     </View>

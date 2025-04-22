@@ -5,6 +5,7 @@ export const ORDER_LOADING = 'ORDER_LOADING';
 export const ORDER_FAILURE = 'ORDER_FAILURE';
 export const FETCH_ORDER = 'FETCH_ORDER';
 export const FETCH_ORDERHISTORY = 'FETCH_ORDERHISTORY';
+export const FETCH_TOTAL_SPENT = 'FETCH_TOTAL_SPENT';
 export const ADD_ORDER = 'ADD_ORDER';
 export const ERROR = 'ERROR';
 
@@ -167,6 +168,38 @@ export const fetchOrderHistory = () => {
       dispatch({
         type: FETCH_ORDERHISTORY,
         orderHistory,
+      });
+    } catch (err) {
+      throw err;
+    }
+  };
+};
+
+export const GetUserTotalSpent = () => {
+  return async (dispatch, getState) => {
+    const jwtToken = getState().auth.token;
+    try {
+      const response = await timeoutPromise(
+        fetch(`${API_URL_NHAXINH}/Order/GetUserTotalSpent`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        }),
+      );
+      if (!response.ok) {
+        dispatch({
+          type: ORDER_FAILURE,
+        });
+        throw new Error("Something went wrong! Can't get your order");
+      }
+      const resData = await response.json();
+      const totalSpent = resData || [];
+      dispatch({
+        type: FETCH_TOTAL_SPENT,
+        totalSpent,
       });
     } catch (err) {
       throw err;

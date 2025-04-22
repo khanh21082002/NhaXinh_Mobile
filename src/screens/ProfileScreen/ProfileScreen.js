@@ -3,7 +3,7 @@ import { View, StyleSheet, Dimensions, Alert, TouchableOpacity, Text } from "rea
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 // Actions
-import { UploadProfilePic } from "../../reducers";
+import { GetUserTotalSpent, UploadProfilePic } from "../../reducers";
 import { EditButton, ProfilePic, ProfileBody } from "./components";
 // Import SheetManager từ react-native-actions-sheet
 import { SheetProvider } from "react-native-actions-sheet";
@@ -14,6 +14,7 @@ const { width, height } = Dimensions.get("window");
 
 export const ProfileScreen = (props) => {
   const user = useSelector((state) => state.auth.user);
+  const totalSpent = useSelector((state) => state.order.totalSpent);
   const loading = useSelector((state) => state.auth.isLoading);
   const [imageUri, setImageUri] = useState("");
   const [filename, setFilename] = useState("");
@@ -22,6 +23,10 @@ export const ProfileScreen = (props) => {
 
   const dispatch = useDispatch();
   const unmounted = useRef(false);
+
+  useEffect(() => {
+    dispatch(GetUserTotalSpent());
+  }, [dispatch]);
 
   useEffect(() => {
     return () => {
@@ -40,6 +45,8 @@ export const ProfileScreen = (props) => {
     }
   };
 
+  
+
   return (
     <SheetProvider context="global">
       <View style={styles.container}>
@@ -49,6 +56,7 @@ export const ProfileScreen = (props) => {
           <View style={styles.profileBox}>
             <ProfilePic
               user={user}
+              totalSpent={totalSpent}
               imageUri={imageUri}
               setImageUri={setImageUri}
               setType={setType}

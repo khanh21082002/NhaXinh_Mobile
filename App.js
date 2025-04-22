@@ -66,7 +66,7 @@ export default function App() {
       .then(() => setAssetLoaded(true))
       .catch(err => console.warn(err));
 
-    // LogBox.ignoreAllLogs(true);
+    LogBox.ignoreAllLogs(true);
   }, []);
 
   // if (!assetLoaded) {

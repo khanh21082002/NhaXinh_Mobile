@@ -31,8 +31,10 @@ const HistoryOrderScreen = () => {
   useEffect(() => {
     loadOrderHistory();
   }, []);
+  
+  const filteredOrderHistory = orderHistory.filter(order => order.status !== 'canceled');
 
-  const sortedOrderHistory = [...orderHistory].sort(
+  const sortedOrderHistory = [...filteredOrderHistory].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
   );
 

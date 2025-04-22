@@ -75,7 +75,7 @@ const ChatListScreen = ({navigation}) => {
           source={
             item.avatarUrl
               ? {uri: item.avatarUrl}
-              : require('../../assets/images/defaultprofile.jpg')
+              : require('../../assets/images/imgprofile.jpg')
           }
           style={styles.avatar}
         />

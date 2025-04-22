@@ -66,7 +66,7 @@ export const Comments = item => {
             style={styles.profilePic}
             source={
               user.avatarUrl?.length === 0
-                ? require('../../../assets/images/defaultprofile.jpg')
+                ? require('../../../assets/images/imgprofile.jpg')
                 : {uri: user.avatarUrl}
             }
           />
