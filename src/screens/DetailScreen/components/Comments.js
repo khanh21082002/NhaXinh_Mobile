@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -11,24 +11,26 @@ import {
   ScrollView,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import CustomText from '../../../components/UI/CustomText';
 import Colors from '../../../utils/Colors';
 import UserComment from './UserComment';
-import {addToReview, fetchReview} from '../../../reducers';
+import { addToReview, checkUserToReview, fetchReview } from '../../../reducers';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export const Comments = item => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.auth.user);
   const comments = useSelector(state => state.review.reviews);
   const isLoading = useSelector(state => state.review.isLoading); // Trạng thái loading
+  const canReview = useSelector(state => state.review.canReview); // Trạng thái người dùng có thể bình luận
   const [textComment, setTextComment] = useState('');
   const [showAllComments, setShowAllComments] = useState(false);
 
   useEffect(() => {
     dispatch(fetchReview(item.item.productId));
+    dispatch(checkUserToReview(item.item.productId));
   }, [dispatch, item.item.productId]);
 
   const handleCommentSubmit = () => {
@@ -50,24 +52,20 @@ export const Comments = item => {
     ? sortedComments
     : sortedComments.slice(0, 4);
 
-  // Check if user has a verified purchase
-  const hasVerifiedPurchase = comments.some(
-    comment => comment.verifiedPurchase,
-  );
   return (
     <View style={styles.commentContainer}>
       <CustomText style={styles.title}>Bình luận</CustomText>
       <CustomText style={styles.commentCount}>{comments.length}</CustomText>
 
-      {/* Input nhập bình luận */}
-      {Object.keys(user).length !== 0 && hasVerifiedPurchase && (
+      {/* Kiểm tra nếu người dùng có quyền bình luận */}
+      {canReview && Object.keys(user).length !== 0 && (
         <View style={styles.inputContainer}>
           <Image
             style={styles.profilePic}
             source={
               user.avatarUrl?.length === 0
                 ? require('../../../assets/images/imgprofile.jpg')
-                : {uri: user.avatarUrl}
+                : { uri: user.avatarUrl }
             }
           />
           <TextInput
@@ -96,7 +94,7 @@ export const Comments = item => {
       <FlatList
         data={displayedComments}
         keyExtractor={item => item.reviewId.toString()}
-        renderItem={({item}) => <UserComment comment={item} />}
+        renderItem={({ item }) => <UserComment comment={item} />}
         nestedScrollEnabled={true}
       />
 

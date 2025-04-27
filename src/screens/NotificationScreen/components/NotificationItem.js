@@ -25,7 +25,9 @@ const NotificationItem = ({ item, onPress }) => {
         {item.message && (
           <Text style={styles.description} numberOfLines={2}>{item.message}</Text>
         )}
-        <Text style={styles.time}>{moment(item.createdDate).format('Do MMMM YYYY, hh:mm a')}</Text>
+        <Text style={styles.time}>
+          {moment(item.createdDate).add(7, 'hours').format('Do MMMM YYYY, hh:mm a')}
+        </Text>
       </View>
     </TouchableOpacity>
   );

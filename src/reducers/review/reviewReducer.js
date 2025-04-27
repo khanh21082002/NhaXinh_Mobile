@@ -4,10 +4,12 @@ import {
   FETCH_REVIEWHISTORY,
   REVIEW_LOADING,
   REVIEW_FAILURE,
+  CHECK_USER_TO_REVIEW,
 } from "./reviewActions";
 
 const initialState = {
   reviews: [],
+  canReview: false,
   isLoading: false,
 };
 
@@ -32,6 +34,12 @@ export const reviewReducer = (state = initialState, action) => {
     case FETCH_REVIEWHISTORY:
       return {
         ...state,
+        isLoading: false,
+      };
+    case CHECK_USER_TO_REVIEW:
+      return {
+        ...state,
+        canReview: action.canReview,
         isLoading: false,
       };
     case ADD_REVIEW:

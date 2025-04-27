@@ -45,7 +45,9 @@ export const OrderItem = ({order, user, productList}) => {
         <View style={styles.textContainer}>
           <CustomText style={styles.text}>Ngày đặt: </CustomText>
           <CustomText style={styles.detail}>
-            {moment(order.createdAt).format('Do MMMM YYYY, hh:mm a')}
+            {moment(order.createdAt)
+              .add(7, 'hours')
+              .format('Do MMMM YYYY, hh:mm a')}
           </CustomText>
         </View>
 
@@ -92,22 +94,24 @@ export const OrderItem = ({order, user, productList}) => {
             </View>
 
             {/* Nếu phương thức thanh toán là 'Banking' thì hiển thị nút WebView */}
-            {order.paymentMethod === 'banking' && order.status === 'confirmed' && !showWebView && (
-              <View
-                style={[
-                  styles.detailButtom,
-                  {marginTop: 10, backgroundColor: AppColors.primaryButton},
-                ]}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigate('PaymentMethod', {orderId: order.orderId})
-                  }>
-                  <CustomText style={{fontSize: 15, color: '#fff'}}>
-                    Thanh toán qua ngân hàng
-                  </CustomText>
-                </TouchableOpacity>
-              </View>
-            )}
+            {order.paymentMethod === 'banking' &&
+              order.status === 'confirmed' &&
+              !showWebView && (
+                <View
+                  style={[
+                    styles.detailButtom,
+                    {marginTop: 10, backgroundColor: AppColors.primaryButton},
+                  ]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigate('PaymentMethod', {orderId: order.orderId})
+                    }>
+                    <CustomText style={{fontSize: 15, color: '#fff'}}>
+                      Thanh toán qua ngân hàng
+                    </CustomText>
+                  </TouchableOpacity>
+                </View>
+              )}
 
             <View style={styles.steps}>
               <Steps position={status()} />

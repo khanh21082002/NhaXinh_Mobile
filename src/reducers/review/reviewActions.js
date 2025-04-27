@@ -4,6 +4,7 @@ export const REVIEW_LOADING = 'REVIEW_LOADING';
 export const REVIEW_FAILURE = 'REVIEW_FAILURE';
 export const FETCH_REVIEW = 'FETCH_REVIEW';
 export const ADD_REVIEW = 'ADD_REVIEW';
+export const CHECK_USER_TO_REVIEW = 'CHECK_USER_TO_REVIEW';
 
 //Fetch REVIEW
 export const fetchReview = productId => {
@@ -82,6 +83,37 @@ export const addToReview = (productId, comment, rating) => {
       });
     } catch (err) {
       console.log('Error:', err); 
+      throw err;
+    }
+  };
+};
+
+export const checkUserToReview = (productId) => {
+  return async (dispatch, getState) => {
+    const jwtToken = getState().auth.token;
+    try {
+      const response = await timeoutPromise(
+        fetch(`${API_URL_NHAXINH}/Review/CheckUserToReview?productId=${productId}`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: 'application/json',
+          },
+          method: 'GET',
+        }),
+      );
+      if (!response.ok) {
+        dispatch({
+          type: REVIEW_FAILURE,
+        });
+        throw new Error('Something went wrong!');
+      }
+      const resData = await response.json();
+      const canReview = resData;
+      dispatch({
+        type: CHECK_USER_TO_REVIEW,
+        canReview,
+      });
+    } catch (err) {
       throw err;
     }
   };
